@@ -481,32 +481,19 @@ b{font-weight:400;color:var(--ink)}
   <div class="act">act 4 <b>running it</b></div>
   <div class="head"><h1 class="t-h1" data-in>The stack, connected.</h1><ul data-in><li>boring on purpose</li><li>every piece replaceable, nothing locked</li></ul></div>
   <svg class="stack" viewBox="0 0 640 300" data-in>
-    <defs><marker id="a" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="6" markerHeight="6" orient="auto"><path d="M0 0L10 5L0 10z" class="arr"/></marker><marker id="ar" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="6" markerHeight="6" orient="auto"><path d="M0 0L10 5L0 10z" class="arr red"/></marker></defs>
-    <!-- repo -->
-    <rect class="box red" x="200" y="60" width="240" height="180" rx="10"/><text class="lbl2" x="212" y="78">the repo · github</text>
-    <rect class="box" x="214" y="90" width="100" height="30" rx="5"/><text x="222" y="109">tokens + rules</text>
-    <rect class="box" x="326" y="90" width="100" height="30" rx="5"/><text x="334" y="109">content (json)</text>
-    <rect class="box" x="214" y="134" width="212" height="30" rx="5"/><text x="222" y="153">components · sections</text>
-    <rect class="box" x="214" y="178" width="212" height="30" rx="5"/><text x="222" y="197">pages (react · next.js)</text>
-    <path class="ln" d="M264 120 V134 M376 120 V134 M320 164 V178"/>
-    <!-- claude -->
-    <rect class="box red" x="20" y="120" width="130" height="60" rx="10"/><text x="32" y="145">claude code</text><text class="lbl2" x="32" y="165">reads · edits · checks</text>
-    <path class="ln red" d="M150 150 H200" marker-end="url(#ar)"/>
-    <!-- designer -->
-    <rect class="box" x="20" y="30" width="130" height="50" rx="10"/><text x="32" y="52">designer</text><text class="lbl2" x="32" y="70">brief · review</text>
-    <path class="ln" d="M85 80 V120" marker-end="url(#a)"/>
-    <!-- figma -->
-    <rect class="box" x="20" y="220" width="130" height="50" rx="10"/><text x="32" y="242">figma</text><text class="lbl2" x="32" y="260">a view, any direction</text>
-    <path class="ln" d="M85 220 V180" marker-end="url(#a)"/>
-    <!-- vercel -->
-    <rect class="box red" x="490" y="120" width="130" height="60" rx="10"/><text x="502" y="145">vercel</text><text class="lbl2" x="502" y="165">push = live · branch = preview</text>
-    <path class="ln red" d="M440 150 H490" marker-end="url(#ar)"/>
-    <!-- services -->
-    <rect class="box" x="490" y="30" width="130" height="50" rx="10"/><text x="502" y="52">forms · analytics</text><text class="lbl2" x="502" y="70">resend · plausible</text>
-    <path class="ln" d="M555 120 V80" marker-end="url(#a)"/>
-    <!-- domain -->
-    <rect class="box" x="490" y="220" width="130" height="50" rx="10"/><text x="502" y="242">your domain</text><text class="lbl2" x="502" y="260">dns moves last</text>
-    <path class="ln" d="M555 180 V220" marker-end="url(#a)"/>
+    <defs><marker id="ar" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="6" markerHeight="6" orient="auto"><path d="M0 0L10 5L0 10z" class="arr red"/></marker></defs>
+    <rect class="box red" x="10" y="100" width="120" height="100" rx="10"/><text x="24" y="130" style="font-size:15px">your LLM</text><text class="lbl2" x="24" y="152">claude code</text><text class="lbl2" x="24" y="166">reads · edits · checks</text>
+    <path class="ln red" d="M130 150 H170" marker-end="url(#ar)"/>
+    <rect class="box red" x="170" y="40" width="240" height="220" rx="10"/><text x="184" y="70" style="font-size:15px">github</text><text class="lbl2" x="184" y="88">the repo — everything lives here</text>
+    <rect class="box" x="184" y="104" width="212" height="30" rx="5"/><text x="194" y="123">tokens + DESIGN.md</text>
+    <rect class="box" x="184" y="142" width="212" height="30" rx="5"/><text x="194" y="161">components · sections</text>
+    <rect class="box" x="184" y="180" width="212" height="30" rx="5"/><text x="194" y="199">pages</text>
+    <rect class="box" x="184" y="218" width="212" height="30" rx="5"/><text x="194" y="237">content · assets · fonts</text>
+    <path class="ln red" d="M410 150 H450" marker-end="url(#ar)"/>
+    <rect class="box red" x="450" y="100" width="120" height="100" rx="10"/><text x="464" y="130" style="font-size:15px">vercel</text><text class="lbl2" x="464" y="152">push = live</text><text class="lbl2" x="464" y="166">branch = preview</text>
+    <path class="ln red" d="M570 150 H610" marker-end="url(#ar)"/>
+    <rect class="box" x="610" y="100" width="28" height="100" rx="10"/>
+    <text x="630" y="230" text-anchor="end" style="font-size:15px">your domain</text><text class="lbl2" x="630" y="246" text-anchor="end">dns last</text>
   </svg>
 </section>
 
