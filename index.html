@@ -264,6 +264,9 @@ b{font-weight:400;color:var(--ink)}
 .migsteps li.now{color:var(--ink)}.migsteps li.now b{color:var(--red)}
 .migsteps li.done{color:var(--ink-muted)}
 .mig .term{font-size:clamp(16px,1.5vw,27px)}
+.mig.onep{grid-template-columns:46fr 54fr}
+.mig.onep .term{font-size:clamp(13px,1.15vw,21px)}
+.mig.onep .frame{height:100%;aspect-ratio:auto}
 </style>
 </head>
 <body>
@@ -466,15 +469,11 @@ b{font-weight:400;color:var(--ink)}
 <!-- 14 · one prompt → proposal -->
 <section class="slide" data-name="onepr">
   <div class="act">act 3 <b>system · one prompt</b></div>
-  <div class="head"><h1 class="t-h1" data-in>One prompt.<br>One page.</h1><ul data-in><li>a proposal for a made-up client, built on our system</li><li>the prompt, verbatim</li></ul></div>
-  <div class="prompt" data-in id="oneprompt"><div class="tag">the brief</div><p>Build /proposals/halden — a creative-retainer proposal for Halden, a carbon-accounting SaaS for mid-market CFOs, London. Inbound from their head of marketing; call yesterday. They need launch films, case studies, LinkedIn motion, static ads and a pitch-deck refresh. Use the noah proposal as the structural reference: same section rhythm, same primitives, pricing at £85/h with 60 h/month default and hours flexing inside a quarter. <b>Use the design system only — tokens, existing components, Reveal — never a raw value.</b> Pick the case studies that fit a fintech; reviews verbatim from data/reviews.ts. Voice: plain, premium, lowercase headlines with one red hit each, every section fits one screen. Run the dev server, open the page in the browser at 1440 wide, scroll every section, fix anything broken, then report.</p></div>
-</section>
-
-<!-- 15 · result scroll -->
-<section class="slide" data-name="result">
-  <div class="act">act 3 <b>system · one prompt</b></div>
-  <div class="head"><h1 class="t-h1" data-in>The page it built.</h1><ul data-in><li>untouched — first pass, no edits</li></ul></div>
-  <div class="termwrap" data-in><div class="frame tall"><video muted loop playsinline data-src="video/halden.mp4"></video><img data-src="shots/halden.png" alt=""><div class="ph"><span>clip</span><b>video/halden.mp4</b></div></div></div>
+  <div class="head"><h1 class="t-h1" data-in>One prompt. One page.</h1><ul data-in><li>a proposal for a made-up client, built on our system</li><li>first pass, untouched</li></ul></div>
+  <div class="mig onep" data-in>
+    <div class="term hot" data-script="onep"><div class="bar"><i></i><i></i><i></i><span>claude · ~/code/unknw-web</span></div><div class="body"></div></div>
+    <div class="frame tall"><video muted loop playsinline data-src="video/halden.mp4"></video><img data-src="shots/halden.png" alt=""><div class="ph"><span>clip</span><b>video/halden.mp4</b></div></div>
+  </div>
 </section>
 
 <!-- 16 · stack diagram -->
@@ -571,6 +570,15 @@ let i=Math.min(slides.length-1,Math.max(0,(parseInt(location.hash.slice(1))||1)-
 
 /* ── terminal scripts: [kind, text, holdMs]; kinds: p=prompt typed, t=think, l=tool line, o=output, ok=done */
 const SCRIPTS={
+onep:[
+ ['p','Build /proposals/halden — a creative-retainer proposal for Halden, a carbon-accounting SaaS for mid-market CFOs, London. Inbound from their head of marketing; call yesterday. They need launch films, case studies, LinkedIn motion, static ads and a pitch-deck refresh. Use the noah proposal as the structural reference: same section rhythm, same primitives, pricing at £85/h with 60 h/month default and hours flexing inside a quarter. Use the design system only — tokens, existing components, Reveal — never a raw value. Pick the case studies that fit a fintech; reviews verbatim from data/reviews.ts. Voice: plain, premium, lowercase headlines with one red hit each, every section fits one screen. Run the dev server, open the page at 1440, scroll every section, fix anything broken, then report.',800],
+ ['t','reading noah/page.tsx, DESIGN.md, globals.css, data/reviews.ts…',900],
+ ['l','write proposals/app/proposals/halden/page.tsx',700],
+ ['l','run   dev → /proposals/halden',500],
+ ['l','browser 1440 · 9 sections · fixed 2 wraps',900],
+ ['l','tsc --noEmit ✓',500],
+ ['ok','/proposals/halden built: hero, the ask, three options compared, what we make first, plan, pricing at £85/h, work (paysend · thanksben · metaview), reviews, close. No new tokens, no new components.',0],
+],
 migrate:[
  ['step',0],['p','New repo for the acme-site migration. Install what you need to crawl and audit a live site: a headless browser, a sitemap crawler, image tooling. Then audit https://acme.webflow.io — pages, sections, assets, fonts, collections — into docs/inventory.md.',600],['l','npm i -D playwright sharp · npx playwright install chromium',500],['l','crawl 23 urls · 212 images · 3 font families · 4 collections → docs/inventory.md',1400],
  ['step',1],['p','Export every CMS collection from the Webflow site to data/*.json. Convert rich-text HTML cells to markdown. Report row counts per collection.',600],['l','4 collections → work 18 · team 9 · posts 31 · clients 24',1400],
