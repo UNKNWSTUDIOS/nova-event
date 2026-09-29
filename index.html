@@ -49,16 +49,16 @@ b{font-weight:400;color:var(--ink)}
 .lines p.yes span{color:var(--red)}
 
 /* columns */
-.cols{display:grid;gap:2.4vw;margin-top:1vh}
+.cols{display:grid;gap:3vw;margin-top:3vh}
 .cols.c2{grid-template-columns:1fr 1fr}
 .cols.c3{grid-template-columns:1fr 1fr 1fr}
 .cols.c4{grid-template-columns:repeat(4,1fr)}
-.col{border-top:1px solid var(--hairline-strong);padding-top:2vh}
+.col{border-top:1px solid var(--hairline-strong);padding-top:2.8vh}
 .col.hot{border-top-color:var(--red)}
 .col .h{font-family:var(--font-display);letter-spacing:-.02em;font-size:clamp(24px,2.6vw,48px);line-height:1.02;margin-bottom:1.8vh}
-.col .k{font-family:var(--font-mono);font-size:clamp(11px,.9vw,15px);letter-spacing:.1em;text-transform:uppercase;color:var(--ink-faint);margin-bottom:1.2vh}
+.col .k{font-family:var(--font-mono);font-size:clamp(11px,.9vw,15px);letter-spacing:.1em;text-transform:uppercase;color:var(--ink-faint);margin-bottom:2.2vh}
 .col.hot .k{color:var(--red)}
-.col ul{list-style:none;display:flex;flex-direction:column;gap:1.3vh}
+.col ul{list-style:none;display:flex;flex-direction:column;gap:2.2vh}
 .col li{font-size:clamp(16px,1.5vw,26px);line-height:1.3;color:var(--ink-muted)}
 .col li b{color:var(--ink)}
 .col li.no{color:var(--ink-faint);text-decoration:line-through}
@@ -272,6 +272,15 @@ b{font-weight:400;color:var(--ink)}
 .mig.onep{grid-template-columns:46fr 54fr}
 .mig.onep .term{font-size:clamp(13px,1.15vw,21px)}
 .mig.onep .frame{height:100%;aspect-ratio:auto}
+
+.pagestruct{width:min(100%, 56vw);align-self:center;display:flex;flex-direction:column;gap:1vh;margin-top:1vh}
+.ps{border:1px solid var(--hairline-strong);border-radius:10px;padding:1.6vh 1.4vw;display:flex;justify-content:space-between;align-items:baseline;background:var(--bg-raised);font-size:clamp(15px,1.4vw,24px);color:var(--ink-muted)}
+.ps.red{border-color:var(--red);color:var(--ink)}
+.ps i{font-style:normal;font-family:var(--font-mono);font-size:clamp(10px,.8vw,13px);letter-spacing:.1em;text-transform:uppercase;color:var(--red)}
+.ps.row{border:0;background:none;padding:0;gap:1vw;display:flex}
+.ps.row .ps{padding:2.6vh 1.4vw}
+.dmd{display:grid;grid-template-columns:58fr 42fr;gap:3vw;align-items:center;margin-top:2vh;flex:1}
+.dmd .lines p{font-size:clamp(26px,3.2vw,58px)}
 </style>
 </head>
 <body>
@@ -402,7 +411,7 @@ b{font-weight:400;color:var(--ink)}
     <div class="brief">
       <p><b>1 · framework.</b> "Set up a Next.js app in TypeScript. Plain CSS."</p>
       <p><b>2 · tokens.</b> "From docs/inventory.md write <code>globals.css :root</code>: colour by role, a six-step type ladder, spacing, radius, motion. Round, don't copy."</p>
-      <p><b>3 · the rules.</b> "Write DESIGN.md: never a raw value, reuse before building, every state change animates, never invent content."</p>
+      <p><b>3 · the rules.</b> "Write design.md: never a raw value, reuse before building, every state change animates, never invent content."</p>
       <p><b>4 · /ds.</b> "Render every token on one page so a human can read the system."</p>
       <p><b>5 · components.</b> "Nav, footer, button, link, reveal. Nothing else yet."</p>
       <p><b>6 · pages.</b> "Now /about from the screenshots and the content file. Check it in the browser at 1440 and 390 before reporting."</p>
@@ -422,19 +431,19 @@ b{font-weight:400;color:var(--ink)}
 <!-- 11 · DESIGN.md -->
 <section class="slide" data-name="designmd">
   <div class="act">act 3 <b>system</b></div>
-  <div class="head"><h1 class="t-h1" data-in>DESIGN.md</h1><ul data-in><li>rules, written by designers</li></ul></div>
-  <div class="row2 h" data-in>
-    <div class="prompt"><div class="tag">DESIGN.md · excerpt</div>
+  <div class="head"><h1 class="t-h1" data-in>design.md</h1><ul data-in><li>rules, written by designers</li></ul></div>
+  <div class="dmd" data-in>
+    <div class="lines" style="margin-top:0">
+      <p class="yes">Designers write the rules.</p>
+      <p class="yes">Claude designs the pages —</p>
+      <p class="yes">based on the tokens, not from scratch.</p>
+      <p>Better pages every month, because the rules grow.</p>
+    </div>
+    <div class="prompt"><div class="tag" style="text-transform:none;letter-spacing:.02em">design.md · excerpt</div>
 <p><b>Never a raw value.</b> A new hex means you skipped the token.</p>
 <p><b>Reuse before building.</b> Two components doing one job is a bug.</p>
 <p><b>Every state change animates.</b> Nothing jumps.</p>
 <p><b>Never invent clients, metrics or copy.</b></p>
-    </div>
-    <div class="lines" style="margin-top:0">
-      <p class="yes">Designers write the rules.</p>
-      <p class="yes">Claude designs the pages.</p>
-      <p class="yes">Based on the tokens — not from scratch.</p>
-      <p>Better pages every month, because the rules grow.</p>
     </div>
   </div>
 </section>
@@ -442,32 +451,14 @@ b{font-weight:400;color:var(--ink)}
 <!-- 13 · reusable sections -->
 <section class="slide" data-name="sections">
   <div class="act">act 3 <b>system</b></div>
-  <div class="head"><h1 class="t-h1" data-in>You can still keep<br>reusable sections.</h1><ul data-in><li>flexible doesn't mean everything from scratch</li></ul></div>
-  <div class="dia" data-in>
-    <div class="hot">
-      <div class="k">a few sections you choose to keep</div>
-      <svg viewBox="0 0 400 200">
-        <rect class="cmp red" x="0" y="0" width="400" height="44" rx="6"/><text x="10" y="26">Hero — headline, one line, one action</text>
-        <rect class="cmp red" x="0" y="52" width="400" height="44" rx="6"/><text x="10" y="78">Stats — three numbers, one line each</text>
-        <rect class="cmp red" x="0" y="104" width="400" height="44" rx="6"/><text x="10" y="130">Reviews — verbatim, name, company</text>
-        <rect class="cmp red" x="0" y="156" width="400" height="44" rx="6"/><text x="10" y="182">CTA — one sentence, one button</text>
-      </svg>
-      <p class="cap"><b>Built once, used everywhere.</b> Same tokens under them. Editing one updates forty pages.</p>
-    </div>
-    <div>
-      <div class="k">one real page · sections + free pieces, together</div>
-      <svg viewBox="0 0 400 200">
-        <rect class="free" x="0" y="0" width="400" height="200" rx="8"/>
-        <rect class="cmp red" x="10" y="8" width="380" height="30" rx="4"/><text x="18" y="27">Hero</text><text class="lbl2" x="340" y="27">section</text>
-        <rect class="cmp" x="10" y="44" width="230" height="56" rx="4"/><text x="18" y="62">a film + a chart this page needs</text>
-        <rect class="cmp" x="248" y="44" width="142" height="56" rx="4"/><text x="256" y="62">a table</text>
-        <rect class="cmp red" x="10" y="106" width="380" height="26" rx="4"/><text x="18" y="123">Stats</text><text class="lbl2" x="340" y="123">section</text>
-        <rect class="cmp" x="10" y="138" width="120" height="26" rx="4"/><text x="18" y="155">a layout</text>
-        <rect class="cmp" x="138" y="138" width="252" height="26" rx="4"/><text x="146" y="155">a long read, its own rhythm</text>
-        <rect class="cmp red" x="10" y="170" width="380" height="22" rx="4"/><text x="18" y="185">CTA</text><text class="lbl2" x="340" y="185">section</text>
-      </svg>
-      <p class="cap"><b>Red = shared section, grey = written for this page.</b> Same tokens under both. You decide what's a section — it doesn't decide for you.</p>
-    </div>
+  <div class="head"><h1 class="t-h1" data-in>You can still keep<br>reusable sections.</h1><ul data-in><li>red = shared section · grey = written for this page</li><li>same tokens under both</li></ul></div>
+  <div class="pagestruct" data-in>
+    <div class="ps red"><span>Hero</span><i>section</i></div>
+    <div class="ps row"><div class="ps" style="flex:3"><span>a film + a chart this page needs</span></div><div class="ps" style="flex:2"><span>a table</span></div></div>
+    <div class="ps red"><span>Stats</span><i>section</i></div>
+    <div class="ps row"><div class="ps" style="flex:1"><span>a layout</span></div><div class="ps" style="flex:3"><span>a long read, its own rhythm</span></div></div>
+    <div class="ps red"><span>Reviews</span><i>section</i></div>
+    <div class="ps red"><span>CTA</span><i>section</i></div>
   </div>
 </section>
 
@@ -499,7 +490,7 @@ b{font-weight:400;color:var(--ink)}
       <rect class="box red" x="215" y="30" width="210" height="240" rx="14"/>
       <text class="big" x="320" y="68" text-anchor="middle">github</text>
       <text class="lbl2" x="320" y="88" text-anchor="middle">everything lives here</text>
-      <rect class="box" x="237" y="106" width="166" height="32" rx="7"/><text x="320" y="127" text-anchor="middle">tokens · DESIGN.md</text>
+      <rect class="box" x="237" y="106" width="166" height="32" rx="7"/><text x="320" y="127" text-anchor="middle">tokens · design.md</text>
       <rect class="box" x="237" y="146" width="166" height="32" rx="7"/><text x="320" y="167" text-anchor="middle">components · sections</text>
       <rect class="box" x="237" y="186" width="166" height="32" rx="7"/><text x="320" y="207" text-anchor="middle">pages</text>
       <rect class="box" x="237" y="226" width="166" height="32" rx="7"/><text x="320" y="247" text-anchor="middle">content · assets · fonts</text>
@@ -522,7 +513,7 @@ b{font-weight:400;color:var(--ink)}
     <div class="hot">
       <div class="k">what it costs</div>
       <div class="n">2 weeks <small>· 60–80 h of your time</small></div>
-      <ul><li>One person who owns it, end to end.</li><li>Week one is the system: tokens, DESIGN.md, components. Week two is pages.</li><li>Tokens: tens of dollars. Hosting: free to ~$20/mo. Builder seats: gone.</li><li>After that, a page is an hour.</li></ul>
+      <ul><li>One person who owns it, end to end.</li><li>Week one is the system: tokens, design.md, components. Week two is pages.</li><li>Tokens: tens of dollars. Hosting: free to ~$20/mo. Builder seats: gone.</li><li>After that, a page is an hour.</li></ul>
     </div>
   </div>
 </section>
@@ -545,7 +536,7 @@ b{font-weight:400;color:var(--ink)}
   <div class="steps" data-in>
     <div class="step"><span class="n">01</span><span class="t">The builder is rigid: seats, barriers, page by page.</span><span class="d">Its pipeline was designed for 2019.</span></div>
     <div class="step"><span class="n">02</span><span class="t">Migrate in seven steps. Take content, leave code.</span><span class="d">Export, originals, URLs, screenshots, tokens, rebuild, DNS last.</span></div>
-    <div class="step"><span class="n">03</span><span class="t">Tokens + DESIGN.md before any page.</span><span class="d">Designers write the rules; the pages get designed on top of them.</span></div>
+    <div class="step"><span class="n">03</span><span class="t">Tokens + design.md before any page.</span><span class="d">Designers write the rules; the pages get designed on top of them.</span></div>
     <div class="step"><span class="n">04</span><span class="t">One prompt, one page. For real.</span><span class="d">You saw the proposal. Reusable sections where you want them, freedom everywhere else.</span></div>
     <div class="step"><span class="n">05</span><span class="t">Hours, not weeks. The site becomes the source of truth.</span><span class="d">Two weeks to get there — on your own or with us.</span></div>
   </div>
