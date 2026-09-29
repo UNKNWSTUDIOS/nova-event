@@ -240,6 +240,21 @@ b{font-weight:400;color:var(--ink)}
 .brief p+p{margin-top:.8em}
 .tall{width:100%;aspect-ratio:auto;height:calc(100vh - var(--top,240px) - var(--pad-y) - 2vh)}
 .tall img,.tall video{object-fit:cover;object-position:top}
+
+/* token preview */
+.tokens{display:flex;flex-direction:column;gap:2vh;border:1px solid var(--hairline-strong);border-radius:12px;padding:2vh 1.4vw;background:var(--bg-raised)}
+.tk .k{font-family:var(--font-mono);font-size:clamp(10px,.8vw,13px);letter-spacing:.1em;text-transform:uppercase;color:var(--red);margin-bottom:.9vh}
+.sw{display:grid;grid-template-columns:repeat(6,1fr);gap:.5vw}
+.sw i{display:flex;align-items:flex-end;height:6.5vh;border-radius:6px;padding:.5vh .5vw;border:1px solid var(--hairline)}
+.sw b,.sp b,.sh b{font-family:var(--font-mono);font-size:clamp(9px,.72vw,12px);letter-spacing:.04em;color:var(--ink);font-weight:400}
+.ty{display:flex;align-items:baseline;gap:1.4vw;font-size:clamp(14px,1.5vw,26px);line-height:1;color:var(--ink)}
+.sp{display:flex;flex-direction:column;gap:.5vh}
+.sp i{display:block;height:1.9vh;background:var(--red);border-radius:2px;position:relative;opacity:.9}
+.sp i b{position:absolute;left:calc(100% + .6vw);top:0;line-height:1.9vh;white-space:nowrap;color:var(--ink-muted)}
+.sh{display:flex;gap:1vw}
+.sh i{flex:1;height:6vh;border:1px solid var(--hairline-strong);display:flex;align-items:center;justify-content:center;background:var(--bg)}
+.sh i.mv{border-radius:12px;animation:mv 2.4s var(--ease-out) infinite alternate}
+@keyframes mv{from{transform:translateX(0)}to{transform:translateX(1.2vw)}}
 </style>
 </head>
 <body>
@@ -386,21 +401,12 @@ b{font-weight:400;color:var(--ink)}
       <p><b>6 · pages.</b> "Now /about from the screenshots and the content file. Check it in the browser at 1440 and 390 before reporting."</p>
     </div>
     <div>
-      <div class="code"><b>:root</b> {
-  <i>--bg</i>: #1e1e20;      <i>--bg-raised</i>: #27272a;
-  <i>--ink</i>: #f4f4f2;     <i>--ink-muted</i>: rgba(244,244,242,.64);
-  <i>--red</i>: #ff2e1a;     <i>--hairline</i>: rgba(244,244,242,.14);
-
-  <i>--font-display</i>: 'Grafier';  <i>--font-body</i>: 'Unica';
-  <i>--text-display</i>: clamp(52px, 9.2vw, 164px);
-  <i>--text-h1</i>: clamp(40px, 6.4vw, 112px);
-  <i>--text-h2</i>: clamp(30px, 4vw, 64px);
-  <i>--text-body</i>: clamp(17px, 1.3vw, 22px);
-
-  <i>--pad-x</i>: clamp(20px, 4vw, 64px);  <i>--gap-section</i>: 18vh;
-  <i>--radius</i>: 12px;  <i>--ease-out</i>: cubic-bezier(.22,1,.36,1);
-  <i>--dur</i>: 320ms;
-}</div>
+      <div class="tokens">
+        <div class="tk"><div class="k">colour · by role</div><div class="sw"><i style="background:var(--bg)"><b>--bg</b></i><i style="background:var(--bg-raised)"><b>--bg-raised</b></i><i style="background:var(--ink)"><b style="color:#1e1e20">--ink</b></i><i style="background:var(--ink-muted)"><b style="color:#1e1e20">--ink-muted</b></i><i style="background:var(--red)"><b>--red</b></i><i style="background:transparent;border:1px solid var(--hairline-strong)"><b>--hairline</b></i></div></div>
+        <div class="tk"><div class="k">type · six steps</div><div class="ty"><span style="font-size:2.1em;font-family:var(--font-display);letter-spacing:-.04em">display</span><span style="font-size:1.5em;font-family:var(--font-display);letter-spacing:-.03em">h1</span><span style="font-size:1.15em;font-family:var(--font-display);letter-spacing:-.02em">h2</span><span style="font-size:.85em">body-lg</span><span style="font-size:.72em">body</span><span style="font-size:.6em;color:var(--ink-muted)">small</span></div></div>
+        <div class="tk"><div class="k">space · one scale</div><div class="sp"><i style="width:8%"><b>--pad-row</b></i><i style="width:16%"><b>--gap-cols</b></i><i style="width:28%"><b>--pad-x</b></i><i style="width:44%"><b>--pad-y</b></i><i style="width:64%"><b>--gap-section</b></i></div></div>
+        <div class="tk"><div class="k">shape · motion</div><div class="sh"><i style="border-radius:12px"><b>--radius 12</b></i><i class="mv"><b>--ease-out · --dur 320</b></i></div></div>
+      </div>
       <p class="t-body" style="margin-top:2vh">Why this order: tokens so nothing drifts · rules so corrections stick · components so change is cheap · pages last, because by then they're compositions.</p>
     </div>
   </div>
