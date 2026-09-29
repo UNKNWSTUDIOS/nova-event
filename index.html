@@ -1,0 +1,582 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>Webflow, Wix & Framer → Custom React with Claude Code · Nova × unknw</title>
+<style>
+@font-face { font-family: 'Grafier'; src: url('fonts/Grafier-RegularDisplay.woff2') format('woff2'); font-display: block; }
+@font-face { font-family: 'Unica'; src: url('fonts/Unica77LLCyr-Regular.woff2') format('woff2'); font-display: block; }
+:root {
+  --bg:#1e1e20; --bg-raised:#27272a; --ink:#f4f4f2; --ink-muted:rgba(244,244,242,.68); --ink-faint:rgba(244,244,242,.4);
+  --red:#ff2e1a; --hairline:rgba(244,244,242,.14); --hairline-strong:rgba(244,244,242,.28);
+  --font-display:'Grafier',Georgia,serif; --font-body:'Unica','Helvetica Neue',Arial,sans-serif; --font-mono:ui-monospace,'SF Mono',Menlo,monospace;
+  --ease-out:cubic-bezier(.22,1,.36,1); --dur:320ms; --dur-slow:640ms;
+  --pad-x:3vw; --pad-y:6vh;
+}
+*{box-sizing:border-box;margin:0;padding:0}
+html,body{height:100%;overflow:hidden;background:var(--bg);color:var(--ink);font-family:var(--font-body);-webkit-font-smoothing:antialiased}
+.slide{position:fixed;inset:0;z-index:1;padding:var(--pad-y) var(--pad-x) calc(var(--pad-y) + 2vh);display:flex;flex-direction:column;justify-content:flex-start;opacity:0;visibility:hidden;transform:translateY(10px);transition:opacity var(--dur) var(--ease-out),transform var(--dur) var(--ease-out),visibility 0s linear var(--dur)}
+.slide.on{opacity:1;visibility:visible;transform:none;transition-delay:0s}
+.slide [data-in]{opacity:0;transform:translateY(16px);transition:opacity var(--dur-slow) var(--ease-out),transform var(--dur-slow) var(--ease-out)}
+.slide.on [data-in]{opacity:1;transform:none}
+.slide.on [data-in]:nth-child(1){transition-delay:60ms}.slide.on [data-in]:nth-child(2){transition-delay:140ms}.slide.on [data-in]:nth-child(3){transition-delay:220ms}.slide.on [data-in]:nth-child(4){transition-delay:300ms}.slide.on [data-in]:nth-child(5){transition-delay:380ms}.slide.on [data-in]:nth-child(6){transition-delay:460ms}
+
+.t-display{font-family:var(--font-display);letter-spacing:-.04em;line-height:.92;font-size:clamp(56px,8.6vw,150px)}
+.t-h1{font-family:var(--font-display);letter-spacing:-.03em;line-height:.96;font-size:clamp(40px,5.4vw,96px)}
+.t-h2{font-family:var(--font-display);letter-spacing:-.02em;line-height:1.02;font-size:clamp(26px,3vw,54px)}
+.t-body{font-size:clamp(17px,1.6vw,30px);line-height:1.35;color:var(--ink-muted)}
+.mono{font-family:var(--font-mono);font-size:clamp(12px,1vw,17px);letter-spacing:.08em;text-transform:uppercase;color:var(--ink-faint)}
+.red{color:var(--red)}
+.dim{color:var(--ink-faint)}
+em{font-style:italic}
+b{font-weight:400;color:var(--ink)}
+
+.corner{position:fixed;left:0;right:0;bottom:0;z-index:0;opacity:0;transition:opacity var(--dur-slow) var(--ease-out);pointer-events:none}
+.corner.show{opacity:1}
+.corner svg{width:100vw;height:calc(100vw * 71 / 307);color:#000;display:block}
+
+/* act marker top-left */
+.act{font-family:var(--font-mono);font-size:clamp(11px,.9vw,15px);letter-spacing:.12em;text-transform:uppercase;color:var(--ink-faint);margin-bottom:3vh}
+.act b{color:var(--red)}
+
+/* head row */
+.head{display:grid;grid-template-columns:1fr auto;align-items:start;gap:2vh 3vw;margin-bottom:3vh}
+.head ul{list-style:none;display:flex;flex-direction:column;gap:.4vh;align-items:flex-end;text-align:right;padding-top:1vh}
+.head li{color:var(--ink-muted);font-size:clamp(14px,1.3vw,22px);line-height:1.25;white-space:nowrap}
+
+/* big statement lines */
+.lines{display:flex;flex-direction:column;gap:1.9vh;margin-top:1vh}
+.lines p{font-family:var(--font-display);letter-spacing:-.03em;line-height:1;font-size:clamp(26px,3.3vw,60px);color:var(--ink-faint)}
+.lines p.yes{color:var(--ink)}
+.lines p span{font-family:var(--font-mono);font-size:clamp(13px,1.2vw,22px);letter-spacing:.1em;text-transform:uppercase;color:var(--ink-faint);margin-left:1.4vw;vertical-align:middle}
+.lines p.yes span{color:var(--red)}
+
+/* columns */
+.cols{display:grid;gap:2.4vw;margin-top:1vh}
+.cols.c2{grid-template-columns:1fr 1fr}
+.cols.c3{grid-template-columns:1fr 1fr 1fr}
+.cols.c4{grid-template-columns:repeat(4,1fr)}
+.col{border-top:1px solid var(--hairline-strong);padding-top:2vh}
+.col.hot{border-top-color:var(--red)}
+.col .h{font-family:var(--font-display);letter-spacing:-.02em;font-size:clamp(24px,2.6vw,48px);line-height:1.02;margin-bottom:1.8vh}
+.col .k{font-family:var(--font-mono);font-size:clamp(11px,.9vw,15px);letter-spacing:.1em;text-transform:uppercase;color:var(--ink-faint);margin-bottom:1.2vh}
+.col.hot .k{color:var(--red)}
+.col ul{list-style:none;display:flex;flex-direction:column;gap:1.3vh}
+.col li{font-size:clamp(16px,1.5vw,26px);line-height:1.3;color:var(--ink-muted)}
+.col li b{color:var(--ink)}
+.col li.no{color:var(--ink-faint);text-decoration:line-through}
+
+/* numbered steps */
+.steps{display:flex;flex-direction:column;margin-top:1vh}
+.step{display:grid;grid-template-columns:5vw 1fr 1fr;gap:2vw;align-items:baseline;padding:1.7vh 0;border-top:1px solid var(--hairline)}
+.step:first-child{border-top-color:var(--hairline-strong)}
+.step .n{font-family:var(--font-mono);font-size:clamp(13px,1.2vw,22px);color:var(--red);letter-spacing:.08em}
+.step .t{font-family:var(--font-display);letter-spacing:-.02em;font-size:clamp(22px,2.5vw,46px);line-height:1.02}
+.step .d{font-size:clamp(15px,1.4vw,24px);line-height:1.3;color:var(--ink-muted)}
+.step .d b{color:var(--ink)}
+.step.now .t{color:var(--ink)}
+.step.dim .t{color:var(--ink-faint)}
+.step.dim .n{color:var(--ink-faint)}
+.step.dim .d{color:var(--ink-faint)}
+
+/* media */
+.frame{position:relative;background:var(--bg-raised);border:1px solid var(--hairline);border-radius:12px;overflow:hidden;aspect-ratio:16/9;width:100%;box-shadow:0 30px 80px rgba(0,0,0,.4)}
+.frame img,.frame video{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;object-position:top left;display:block}
+.frame.fit img,.frame.fit video{object-fit:contain;object-position:center}
+.frame .ph{position:absolute;inset:0;display:none;align-items:center;justify-content:center;flex-direction:column;gap:1vh;font-family:var(--font-mono);font-size:12px;letter-spacing:.1em;text-transform:uppercase;color:var(--ink-faint)}
+.frame.missing .ph{display:flex}.frame.missing img,.frame.missing video{display:none}
+.frame .ph b{font-weight:400;color:var(--red)}
+.one{width:min(100%, calc((100vh - 36vh) * 16 / 9));align-self:center}
+.row2{display:grid;grid-template-columns:1fr 1fr;gap:1.4vw;align-items:start}
+.row2.h{grid-template-columns:44fr 56fr}
+.lbl{display:flex;justify-content:space-between;font-family:var(--font-mono);font-size:clamp(11px,.85vw,14px);letter-spacing:.1em;text-transform:uppercase;color:var(--ink-faint);margin-bottom:.8vh}
+.lbl b{font-weight:400;color:var(--red)}
+
+/* terminal stage */
+.term{background:#141416;border:1px solid var(--hairline-strong);border-radius:12px;padding:1.6vh 1.4vw;font-family:var(--font-mono);font-size:clamp(15px,1.35vw,24px);line-height:1.5;color:#e8e8e6;overflow:hidden;box-shadow:0 30px 80px rgba(0,0,0,.4);height:100%;white-space:pre-wrap;word-break:break-word}
+.term.hot{border-color:var(--red)}
+.term .bar{display:flex;align-items:center;gap:6px;font-size:clamp(10px,.8vw,13px);color:var(--ink-faint);letter-spacing:.08em;text-transform:uppercase;margin-bottom:1.2vh}
+.term .bar i{width:8px;height:8px;border-radius:50%;background:#3a3a3e;display:block}.term .bar span{margin-left:6px}
+.term .l{display:block;min-height:1.5em}
+.term .p{color:var(--red)}
+.term .c{color:var(--ink-faint)}
+.term .ok{color:#7fd48a}
+.term .cur::after{content:'';display:inline-block;width:.55em;height:1.05em;background:var(--red);vertical-align:-.15em;margin-left:2px;animation:blink 1s steps(1) infinite}
+@keyframes blink{50%{opacity:0}}
+.termwrap{height:calc(100vh - var(--top,260px) - var(--pad-y) - 2vh)}
+
+/* prompt card */
+.prompt{border:1px solid var(--red);border-radius:12px;padding:2.2vh 1.6vw;background:var(--bg-raised);font-size:clamp(16px,1.5vw,26px);line-height:1.4;color:var(--ink)}
+.prompt .tag{font-family:var(--font-mono);font-size:clamp(11px,.9vw,15px);letter-spacing:.1em;text-transform:uppercase;color:var(--red);margin-bottom:1.2vh}
+.prompt.bad{border-color:var(--hairline);color:var(--ink-muted)}
+.prompt.bad .tag{color:var(--ink-faint)}
+.prompt p+p{margin-top:.8em}
+.prompt code{font-family:var(--font-mono);font-size:.85em;color:var(--ink-muted)}
+
+/* pipeline diagram */
+.pipe{display:grid;grid-template-columns:repeat(5,1fr);gap:1vw;margin-top:2vh;align-items:stretch}
+.pipe .node{border:1px solid var(--hairline-strong);border-radius:12px;padding:2vh 1.2vw;background:var(--bg-raised);position:relative}
+.pipe .node.hot{border-color:var(--red)}
+.pipe .node .k{font-family:var(--font-mono);font-size:clamp(11px,.85vw,14px);letter-spacing:.1em;text-transform:uppercase;color:var(--ink-faint);margin-bottom:1vh}
+.pipe .node.hot .k{color:var(--red)}
+.pipe .node .h{font-family:var(--font-display);letter-spacing:-.02em;font-size:clamp(20px,2vw,38px);line-height:1.02;margin-bottom:1.4vh}
+.pipe .node ul{list-style:none;display:flex;flex-direction:column;gap:.7vh}
+.pipe .node li{font-size:clamp(14px,1.25vw,21px);line-height:1.3;color:var(--ink-muted)}
+.pipe .node+.node::before{content:'→';position:absolute;left:-1vw;top:2.2vh;transform:translateX(-50%);color:var(--red);font-family:var(--font-mono);font-size:clamp(14px,1.3vw,22px)}
+
+/* tags wall */
+.tags{display:flex;flex-wrap:wrap;gap:1vw;margin-top:3vh}
+.tags span{font-family:var(--font-display);letter-spacing:-.02em;font-size:clamp(24px,3vw,56px);line-height:1;color:var(--ink);padding:1.3vh 1.4vw;border:1px solid var(--hairline-strong);border-radius:12px}
+.tags span.dim{color:var(--ink-faint);border-color:var(--hairline)}
+.tags span.hot{border-color:var(--red)}
+
+/* agenda */
+.agenda{display:flex;flex-direction:column;margin-top:2vh}
+.agenda div{display:grid;grid-template-columns:8vw 1fr;gap:2vw;padding:1.6vh 0;border-top:1px solid var(--hairline);font-family:var(--font-display);letter-spacing:-.02em;font-size:clamp(24px,2.8vw,50px);line-height:1.05}
+.agenda div:first-child{border-top-color:var(--hairline-strong)}
+.agenda div span{font-family:var(--font-mono);font-size:clamp(13px,1.2vw,22px);letter-spacing:.08em;color:var(--red);align-self:baseline;padding-top:.5em}
+.agenda div.dim{color:var(--ink-faint)}.agenda div.dim span{color:var(--ink-faint)}
+
+/* cover / close */
+.full{padding:0}
+.cover{justify-content:flex-end;padding:var(--pad-y) var(--pad-x)}
+.cover .who{display:flex;align-items:center;gap:1.4vw;margin-bottom:6vh}
+.cover .who svg{height:3.2vh;width:auto;color:var(--ink);display:block}
+.cover .who i{font-style:normal;color:var(--ink-faint);font-family:var(--font-mono);font-size:clamp(11px,1vw,16px);letter-spacing:.12em;text-transform:uppercase}
+.cover .sub{margin-top:3vh;display:flex;justify-content:space-between;align-items:flex-end}
+.closing{align-items:flex-start;justify-content:flex-end;padding:var(--pad-y) var(--pad-x)}
+
+.progress{position:fixed;left:0;bottom:0;height:2px;background:var(--red);width:0;transition:width var(--dur-slow) var(--ease-out);z-index:5}
+.counter{position:fixed;right:var(--pad-x);bottom:18px;font-family:var(--font-mono);font-size:11px;color:var(--ink-faint);letter-spacing:.1em;z-index:5}
+@media (prefers-reduced-motion:reduce){*{transition-duration:0s!important}}
+</style>
+</head>
+<body>
+<svg width="0" height="0" style="position:absolute" aria-hidden="true">
+  <symbol id="unknw" viewBox="0 0 307 71"><path fill="currentColor" d="M23.3912 11.2103L23.3912 44.5195L26.9182 48.5794H45.172L47.2686 45.3624L47.2686 11.2103L58.9631 0L67.5589 0L102.822 42.8683V0L114.517 0L126.211 11.2103V18.2162L159.346 18.2162V40.6368L144.033 40.6368L152.444 48.5794L168.118 48.5794V11.2103L179.814 0L189.993 0L223.182 36.3593V0L246.574 0V33.242L255.67 21.3842H274.515L283.609 33.242V0L307 0V59.7896L295.305 71H283.541L265.092 46.9505L246.644 71H223.724L191.509 35.7078V59.7896L179.814 71H142.859L126.211 55.2819V59.7896L114.517 71H96.1752L70.6598 39.9793L70.6598 51.7943L58.1364 71L15.9646 71L0 52.6372L0 0L11.6945 0L23.3912 11.2103Z"/></symbol>
+</svg>
+<div class="corner" id="corner"><svg><use href="#unknw"/></svg></div>
+
+<!-- 01 · cover -->
+<section class="slide cover" data-name="cover">
+  <div class="who" data-in><svg><use href="#unknw"/></svg><i>×</i><img src="logos/nova.svg" alt="Nova Talents" style="height:3.2vh"></div>
+  <h1 class="t-display" data-in>Webflow, Wix &amp; Framer<br>→ custom React<br>with Claude Code.</h1>
+  <div class="sub" data-in><p class="t-body">Mike Rosenblatt · founding design director, unknw</p><p class="mono">nova talents · 29.09.2026</p></div>
+</section>
+
+<!-- 02 · agenda -->
+<section class="slide" data-name="agenda">
+  <div class="head"><h1 class="t-h1" data-in>Ninety minutes.</h1><ul data-in><li>slides first, then we look at real repos</li><li>questions any time</li></ul></div>
+  <div class="agenda" data-in>
+    <div><span>19:00</span>Basics — what Claude Code is, and what changes.</div>
+    <div><span>19:15</span>Each platform's quirks — Webflow / Wix / Framer.</div>
+    <div><span>19:35</span>React design-system approach — components, tokens, structure.</div>
+    <div><span>20:00</span>Environment — setup, repo, deploy.</div>
+    <div><span>20:20</span>Q&amp;A.</div>
+  </div>
+</section>
+
+<!-- 03 · why -->
+<section class="slide" data-name="why">
+  <div class="act">act 1 <b>basics</b></div>
+  <div class="head"><h1 class="t-h1" data-in>Why leave a<br>site builder at all?</h1><ul data-in><li>unknw.com was on Webflow until 2025</li><li>now Next.js, ~700 builds later</li></ul></div>
+  <div class="cols c2" data-in>
+    <div class="col">
+      <div class="k">what the builder gives you</div>
+      <ul><li><b>Speed</b> for the first version.</li><li>A designer ships without an engineer.</li><li>Hosting, forms, CMS in one bill.</li></ul>
+    </div>
+    <div class="col hot">
+      <div class="k">what it takes back</div>
+      <ul><li><b>The ceiling.</b> The interaction you saw on Awwwards is not in the panel.</li><li><b>The loop.</b> Every change goes through a person clicking.</li><li><b>The system.</b> Tokens, components, states — the builder has its own opinion.</li><li><b>The exit.</b> Export is HTML soup or nothing.</li><li><b>The cost.</b> Per seat, per site, per CMS item — forever.</li></ul>
+    </div>
+  </div>
+</section>
+
+<!-- 04 · what changed -->
+<section class="slide" data-name="changed">
+  <div class="act">act 1 <b>basics</b></div>
+  <div class="head"><h1 class="t-h1" data-in>What changed in 2025.</h1><ul data-in><li>the reason "custom code" stopped being an engineer's job</li></ul></div>
+  <div class="lines" data-in>
+    <p>Custom code was slower than the builder.<span>before</span></p>
+    <p class="yes">Custom code is faster than the builder.<span>now</span></p>
+    <p>You needed an engineer to change a margin.<span>before</span></p>
+    <p class="yes">You describe the margin. The engineer is a terminal.<span>now</span></p>
+    <p>Design system lived in Figma, code drifted.<span>before</span></p>
+    <p class="yes">Design system lives in code. Figma is a view.<span>now</span></p>
+  </div>
+</section>
+
+<!-- 05 · what claude code is -->
+<section class="slide" data-name="what">
+  <div class="act">act 1 <b>basics</b></div>
+  <div class="head"><h1 class="t-h1" data-in>Claude Code is a colleague<br>who lives in your terminal.</h1><ul data-in><li>not a chat window</li><li>not a "generate my website" button</li></ul></div>
+  <div class="cols c3" data-in>
+    <div class="col hot"><div class="k">it can</div><ul><li>Read your whole repo.</li><li>Edit files, run commands, run the dev server.</li><li>Open the browser and look at the page.</li><li>Commit, push, deploy.</li><li>Remember your rules (CLAUDE.md).</li></ul></div>
+    <div class="col"><div class="k">it is not</div><ul><li>A designer. Taste is yours.</li><li>Magic. It does what the brief says.</li><li>Free. ~$100–200/mo for real use.</li></ul></div>
+    <div class="col"><div class="k">what you need</div><ul><li>A Mac or Linux terminal.</li><li>Node.js, git, an editor (Cursor / VS Code).</li><li>Claude Max subscription or API key.</li><li>Patience for the first two days.</li></ul></div>
+  </div>
+</section>
+
+<!-- 06 · live terminal -->
+<section class="slide" data-name="term-what">
+  <div class="act">act 1 <b>basics</b></div>
+  <div class="head"><h1 class="t-h1" data-in>How a session looks.</h1><ul data-in><li>you type in English</li><li>it reads, plans, edits, checks, reports</li></ul></div>
+  <div class="termwrap" data-in><div class="term hot" data-script="what"><div class="bar"><i></i><i></i><i></i><span>claude · ~/code/mysite</span></div><div class="body"></div></div></div>
+</section>
+
+<!-- 07 · workflow shift -->
+<section class="slide" data-name="loop">
+  <div class="act">act 1 <b>basics</b></div>
+  <div class="head"><h1 class="t-h1" data-in>The loop changes.</h1><ul data-in><li>this is the whole point</li></ul></div>
+  <div class="cols c2" data-in>
+    <div class="col"><div class="k">builder loop</div><ul><li>Design in Figma.</li><li>Rebuild it in the builder panel.</li><li>Fight the panel.</li><li>Publish.</li><li>Client wants a change → back to the panel.</li></ul></div>
+    <div class="col hot"><div class="k">code loop</div><ul><li>Design in Figma (or in code, or both).</li><li>Describe it. Claude builds it against your tokens.</li><li>Look at it in the browser. Say what's wrong.</li><li>Commit. Vercel deploys in 40 seconds.</li><li>Client wants a change → one sentence.</li></ul></div>
+  </div>
+</section>
+
+<!-- 08 · platforms intro -->
+<section class="slide" data-name="platforms">
+  <div class="act">act 2 <b>quirks</b></div>
+  <div class="head"><h1 class="t-h1" data-in>Three builders,<br>three different exits.</h1><ul data-in><li>what comes out, what doesn't</li></ul></div>
+  <div class="cols c3" data-in>
+    <div class="col hot"><div class="h">Webflow</div><div class="k">exports</div><ul><li>HTML / CSS / JS zip — <b>static pages only</b>.</li><li>CMS: CSV per collection.</li><li>Interactions: compiled Webflow JS, useless.</li><li>Classes are semantic-ish — the best starting point of the three.</li></ul></div>
+    <div class="col"><div class="h">Framer</div><div class="k">exports</div><ul><li><b>No code export.</b></li><li>CMS: CSV.</li><li>Components: only via Figma or by re-reading the live page.</li><li>Animations: rebuild — you get the motion values by looking, not by exporting.</li></ul></div>
+    <div class="col"><div class="h">Wix</div><div class="k">exports</div><ul><li><b>Nothing.</b> Not even HTML.</li><li>CMS: CSV from collections.</li><li>Velo code is Wix-only.</li><li>Live DOM is div soup — treat it as a screenshot.</li></ul></div>
+  </div>
+</section>
+
+<!-- 09 · what you actually take -->
+<section class="slide" data-name="take">
+  <div class="act">act 2 <b>quirks</b></div>
+  <div class="head"><h1 class="t-h1" data-in>What you actually take.</h1><ul data-in><li>the honest inventory</li><li>the builder is a source of truth for content, not for code</li></ul></div>
+  <div class="cols c2" data-in>
+    <div class="col hot"><div class="k">take</div><ul><li><b>Content.</b> CSV/JSON of every collection. Claude cleans it.</li><li><b>Assets.</b> Images, videos, fonts — download originals, not the CDN resizes.</li><li><b>URLs.</b> Every path; you will need redirects for the ones you change.</li><li><b>Design decisions.</b> Type scale, spacing, colours — read them off the live site.</li><li><b>Screenshots.</b> Every page, desktop + mobile, full length. This is your spec.</li></ul></div>
+    <div class="col"><div class="k">leave</div><ul><li class="no">Exported HTML as a starting point.</li><li class="no">Interaction / animation code.</li><li class="no">Class names, div structure.</li><li class="no">Forms logic, integrations.</li><li>Rebuild those. It's faster than untangling.</li></ul></div>
+  </div>
+</section>
+
+<!-- 10 · quirk deep dive -->
+<section class="slide" data-name="quirks">
+  <div class="act">act 2 <b>quirks</b></div>
+  <div class="head"><h1 class="t-h1" data-in>The traps.</h1><ul data-in><li>each cost us a day at least once</li></ul></div>
+  <div class="cols c3" data-in>
+    <div class="col"><div class="h">Webflow</div><ul><li><b>Image CDN.</b> Export gives 1600px WebP. Ask the client for originals or pull from the asset panel.</li><li><b>Rich text.</b> CMS rich text comes as HTML in a CSV cell. Claude converts to MDX/JSON.</li><li><b>Fonts.</b> Adobe/Google fonts aren't in the export. Get the licence files.</li><li><b>Symbols</b> map 1:1 to React components — good.</li></ul></div>
+    <div class="col"><div class="h">Framer</div><ul><li><b>Fake scroll.</b> Framer's scroll effects don't live in CSS — rebuild with GSAP or motion.</li><li><b>Breakpoints</b> are per-frame, not per-token. Decide your breakpoints first.</li><li><b>Text is often outlined</b> in components. Check every headline is real text.</li><li><b>Localisation</b> is a whole rebuild, plan for it.</li></ul></div>
+    <div class="col"><div class="h">Wix</div><ul><li><b>Absolute positioning.</b> Wix lays out by pixels. The new site must be a real grid; nothing maps.</li><li><b>Forms &amp; bookings</b> are Wix apps — pick replacements (Tally, Cal.com, Resend) before you start.</li><li><b>SEO.</b> Wix URLs are ugly; the migration is your chance, but 301 everything.</li><li><b>Domain</b> lock — DNS moves last.</li></ul></div>
+  </div>
+</section>
+
+<!-- 11 · pipeline -->
+<section class="slide" data-name="pipeline">
+  <div class="act">act 3 <b>pipeline</b></div>
+  <div class="head"><h1 class="t-h1" data-in>The pipeline.</h1><ul data-in><li>two weeks for a 10-page marketing site</li><li>one person, one terminal</li></ul></div>
+  <div class="pipe" data-in>
+    <div class="node"><div class="k">1 · day 1</div><div class="h">Audit</div><ul><li>Crawl the live site: pages, URLs, assets.</li><li>Screenshot everything.</li><li>Export CMS.</li><li>Claude writes the inventory.</li></ul></div>
+    <div class="node hot"><div class="k">2 · day 2–3</div><div class="h">System</div><ul><li>Tokens from the live site.</li><li>Type ladder, spacing, colours.</li><li>CLAUDE.md rules.</li><li>/ds page.</li></ul></div>
+    <div class="node"><div class="k">3 · day 4–7</div><div class="h">Components</div><ul><li>Nav, footer, button, link.</li><li>Section primitives.</li><li>Reveal / motion once.</li><li>Every page composes these.</li></ul></div>
+    <div class="node"><div class="k">4 · day 8–11</div><div class="h">Pages</div><ul><li>One page at a time, screenshot as spec.</li><li>Content from JSON.</li><li>Claude compares old vs new in the browser.</li></ul></div>
+    <div class="node"><div class="k">5 · day 12–14</div><div class="h">Ship</div><ul><li>Redirects, sitemap, meta.</li><li>Lighthouse.</li><li>Vercel, DNS last.</li><li>Client edits JSON, not the panel.</li></ul></div>
+  </div>
+</section>
+
+<!-- 12 · step 1 audit terminal -->
+<section class="slide" data-name="term-audit">
+  <div class="act">act 3 <b>pipeline · 1 audit</b></div>
+  <div class="head"><h1 class="t-h1" data-in>Day one: the inventory.</h1><ul data-in><li>you never migrate what you haven't counted</li></ul></div>
+  <div class="termwrap" data-in><div class="term hot" data-script="audit"><div class="bar"><i></i><i></i><i></i><span>claude · ~/code/acme-site</span></div><div class="body"></div></div></div>
+</section>
+
+<!-- 13 · tokens -->
+<section class="slide" data-name="tokens">
+  <div class="act">act 3 <b>pipeline · 2 system</b></div>
+  <div class="head"><h1 class="t-h1" data-in>Tokens first.<br>Always.</h1><ul data-in><li>the one rule that makes everything else cheap</li><li>a raw hex in a component is a bug</li></ul></div>
+  <div class="row2 h" data-in>
+    <div>
+      <div class="prompt"><div class="tag">globals.css · :root</div>
+<p><code>--bg: #1e1e20; --bg-raised: #27272a;<br>--ink: #f4f4f2; --ink-muted: rgba(244,244,242,.64);<br>--red: #ff2e1a; --hairline: rgba(244,244,242,.14);</code></p>
+<p><code>--font-display: var(--font-grafier);<br>--font-body: var(--font-unica);</code></p>
+<p><code>--text-display: clamp(52px, 9.2vw, 164px);<br>--text-h1: clamp(40px, 6.4vw, 112px);<br>--text-h2: clamp(30px, 4vw, 64px);</code></p>
+<p><code>--pad-x, --pad-y, --gap-section, --gap-cols<br>--radius, --shadow-card, --ease-out, --dur</code></p>
+      </div>
+    </div>
+    <div class="col hot" style="border-top:0;padding-top:0">
+      <ul>
+        <li><b>Read them off the builder site.</b> Claude opens the live page, reads computed styles, proposes a ladder. You edit the ladder.</li>
+        <li><b>Round to a system.</b> The builder had 14 font sizes. You want 6.</li>
+        <li><b>Name by role, not value.</b> <code>--ink-muted</code>, never <code>--grey-64</code>.</li>
+        <li><b>Put them on a page.</b> <code>/ds</code> — palette, type, spacing, motion, patterns. Claude reads it before building anything.</li>
+        <li><b>Write the rule down.</b> CLAUDE.md: "never a raw hex, never a bare font-size". It obeys.</li>
+      </ul>
+    </div>
+  </div>
+</section>
+
+<!-- 14 · ds page shot -->
+<section class="slide" data-name="ds">
+  <div class="act">act 3 <b>pipeline · 2 system</b></div>
+  <div class="head"><h1 class="t-h1" data-in>unknw.com/ds</h1><ul data-in><li>the living spec: tokens, type, patterns</li><li>Claude reads it. So do freelancers.</li></ul></div>
+  <div class="frame one" data-in><img data-src="shots/ds.png" alt=""><div class="ph"><span>shot</span><b>shots/ds.png</b></div></div>
+</section>
+
+<!-- 15 · CLAUDE.md -->
+<section class="slide" data-name="claudemd">
+  <div class="act">act 3 <b>pipeline · 2 system</b></div>
+  <div class="head"><h1 class="t-h1" data-in>CLAUDE.md is your<br>design director.</h1><ul data-in><li>a text file in the repo root</li><li>read at the start of every session</li></ul></div>
+  <div class="row2 h" data-in>
+    <div class="prompt"><div class="tag">CLAUDE.md · unknw-web (excerpt)</div>
+<p><b>Design system first — tokens, never hardcoded values.</b> Colour via <code>--bg</code>, <code>--ink</code>, <code>--red</code>… Never a raw hex in a component; a new hex means you skipped the token.</p>
+<p><b>Re-use elements before building new ones.</b> Look in <code>components/ui/</code>, <code>components/fx/</code> first. Two components doing the same job is a bug.</p>
+<p><b>Every state change animates.</b> Nothing ever jumps statically.</p>
+<p><b>Feed content lives in JSON.</b> Never hardcode content in components.</p>
+<p><b>Bump the build number on every ship.</b></p>
+    </div>
+    <div class="col hot" style="border-top:0;padding-top:0"><ul>
+      <li><b>Standing rules,</b> not a to-do list. Things that must be true forever.</li>
+      <li><b>Written in your voice.</b> Rules you'd tell a new hire on day one.</li>
+      <li><b>Grows with every correction.</b> You said "no, not like that" → it becomes a rule.</li>
+      <li><b>Where the taste goes.</b> The model has none of yours until you write it down.</li>
+      <li>Ours is ~150 lines. It took a year of shipping.</li>
+    </ul></div>
+  </div>
+</section>
+
+<!-- 16 · components -->
+<section class="slide" data-name="components">
+  <div class="act">act 3 <b>pipeline · 3 components</b></div>
+  <div class="head"><h1 class="t-h1" data-in>Build eight things.<br>Then compose.</h1><ul data-in><li>every page on unknw.com is these</li></ul></div>
+  <div class="cols c4" data-in>
+    <div class="col hot"><div class="k">ui</div><ul><li>Btn, BtnIcon</li><li>Link (view-transition aware)</li><li>Toggle</li><li>Embed (video, YouTube)</li></ul></div>
+    <div class="col"><div class="k">fx</div><ul><li>Reveal (scroll entrance)</li><li>SplitLines (headline)</li><li>PageTransition</li><li>one easing, three durations</li></ul></div>
+    <div class="col"><div class="k">layout</div><ul><li>Nav (the pill)</li><li>SiteFooter</li><li>Logo</li><li>Section (pad-x, pad-y, gap)</li></ul></div>
+    <div class="col"><div class="k">page primitives</div><ul><li>Hero</li><li>Stats</li><li>Cta</li><li>Colophon</li></ul></div>
+  </div>
+  <p class="t-body" style="margin-top:3vh" data-in>Order matters: tokens → ui → fx → layout → primitives → pages. Never the other way. If Claude starts a page before Nav exists, stop it.</p>
+</section>
+
+<!-- 17 · prompts -->
+<section class="slide" data-name="prompts">
+  <div class="act">act 3 <b>pipeline · 4 pages</b></div>
+  <div class="head"><h1 class="t-h1" data-in>How to brief it.</h1><ul data-in><li>same page, three prompts</li></ul></div>
+  <div class="cols c3" data-in>
+    <div class="prompt bad"><div class="tag">too short</div><p>Make the about page.</p><p class="dim">→ generic layout, invented copy, its own colours.</p></div>
+    <div class="prompt bad"><div class="tag">adjective soup</div><p>Build a modern, minimal, elegant about page with smooth animations and a premium feel that reflects our brand values.</p><p class="dim">→ the same generic page, now with a gradient.</p></div>
+    <div class="prompt"><div class="tag">a brief</div><p>Build <code>/about</code> from <code>shots/about-desktop.png</code> and <code>shots/about-mobile.png</code>. Content is in <code>data/about.json</code>. Use Section, Reveal, Btn. Headline is <code>.t-h1</code>, body <code>.t-body</code>. Team grid: 3 columns desktop, 1 mobile, gap <code>--gap-cols</code>. Match the screenshot's spacing within 8px. Open it in the browser at 1440 and 390 and compare to the shots before reporting.</p></div>
+  </div>
+</section>
+
+<!-- 18 · page build terminal -->
+<section class="slide" data-name="term-page">
+  <div class="act">act 3 <b>pipeline · 4 pages</b></div>
+  <div class="head"><h1 class="t-h1" data-in>A page, built.</h1><ul data-in><li>screenshot in, page out, it checks itself</li></ul></div>
+  <div class="termwrap" data-in><div class="term hot" data-script="page"><div class="bar"><i></i><i></i><i></i><span>claude · ~/code/acme-site</span></div><div class="body"></div></div></div>
+</section>
+
+<!-- 19 · unknw.com shot -->
+<section class="slide" data-name="site">
+  <div class="act">act 3 <b>pipeline</b></div>
+  <div class="head"><h1 class="t-h1" data-in>The result.</h1><ul data-in><li>unknw.com — Next.js, ~40 pages</li><li>every page is JSON + eight components</li></ul></div>
+  <div class="row2" data-in>
+    <div><div class="lbl"><span>home</span></div><div class="frame"><img data-src="shots/home.png" alt=""><div class="ph"><span>shot</span><b>shots/home.png</b></div></div></div>
+    <div><div class="lbl"><span>case</span></div><div class="frame"><img data-src="shots/case.png" alt=""><div class="ph"><span>shot</span><b>shots/case.png</b></div></div></div>
+  </div>
+</section>
+
+<!-- 20 · environment -->
+<section class="slide" data-name="env">
+  <div class="act">act 4 <b>environment</b></div>
+  <div class="head"><h1 class="t-h1" data-in>The stack.</h1><ul data-in><li>boring on purpose</li><li>everything here is free or nearly</li></ul></div>
+  <div class="cols c4" data-in>
+    <div class="col hot"><div class="k">framework</div><ul><li><b>Next.js</b> (App Router) or <b>Vite + React</b> for a pure static site.</li><li>TypeScript. Claude is better in it.</li><li>Tailwind v4 or plain CSS with tokens. We do plain CSS.</li></ul></div>
+    <div class="col"><div class="k">content</div><ul><li>JSON in the repo for small sites.</li><li>MDX for long text.</li><li>Sanity / Payload if the client must have a panel.</li></ul></div>
+    <div class="col"><div class="k">motion</div><ul><li>CSS transitions for state.</li><li>GSAP or Motion for scroll.</li><li>View Transitions API for page changes.</li></ul></div>
+    <div class="col"><div class="k">ship</div><ul><li>GitHub repo.</li><li>Vercel — push = deploy, preview per branch.</li><li>Resend for forms, Plausible / GA for stats.</li><li>DNS moves last.</li></ul></div>
+  </div>
+</section>
+
+<!-- 21 · setup terminal -->
+<section class="slide" data-name="term-setup">
+  <div class="act">act 4 <b>environment</b></div>
+  <div class="head"><h1 class="t-h1" data-in>Setup, in one sitting.</h1><ul data-in><li>~40 minutes the first time</li></ul></div>
+  <div class="termwrap" data-in><div class="term hot" data-script="setup"><div class="bar"><i></i><i></i><i></i><span>zsh</span></div><div class="body"></div></div></div>
+</section>
+
+<!-- 22 · running it -->
+<section class="slide" data-name="run">
+  <div class="act">act 4 <b>environment</b></div>
+  <div class="head"><h1 class="t-h1" data-in>Running it, day to day.</h1><ul data-in><li>habits that keep the repo sane</li></ul></div>
+  <div class="steps" data-in>
+    <div class="step"><span class="n">01</span><span class="t">One task per session.</span><span class="d">"Build the nav" — not "build the site". Clear context, clear result.</span></div>
+    <div class="step"><span class="n">02</span><span class="t">Look before you approve.</span><span class="d">It opens the browser; so do you. Say what's wrong in pixels, not adjectives.</span></div>
+    <div class="step"><span class="n">03</span><span class="t">Commit small, often.</span><span class="d">Every green step is a commit. <b>git</b> is your undo.</span></div>
+    <div class="step"><span class="n">04</span><span class="t">Corrections become rules.</span><span class="d">Said it twice? It goes into CLAUDE.md.</span></div>
+    <div class="step"><span class="n">05</span><span class="t">Preview URLs for clients.</span><span class="d">Every branch is a link. Nobody needs the panel to see progress.</span></div>
+    <div class="step"><span class="n">06</span><span class="t">Content edits stay in JSON.</span><span class="d">Client changes a headline → PR or a tiny local editor. Claude can build that editor in an hour.</span></div>
+  </div>
+</section>
+
+<!-- 23 · tips -->
+<section class="slide" data-name="tips">
+  <div class="act">act 4 <b>environment</b></div>
+  <div class="head"><h1 class="t-h1" data-in>Things I wish<br>someone told me.</h1><ul data-in><li>a year of shipping, compressed</li></ul></div>
+  <div class="cols c2" data-in>
+    <div class="col hot"><ul>
+      <li><b>Screenshots are the spec.</b> Better than Figma links. It can see them.</li>
+      <li><b>Give it the browser.</b> Playwright or the built-in tool. "Compare to the shot" beats "make it nice".</li>
+      <li><b>Make it measure.</b> "The nav is weird" → ask for the numbers first, then fix.</li>
+      <li><b>Plan mode for big things.</b> Ask for a plan, read it, then say go.</li>
+      <li><b>Skills / rules files</b> for repeat work: "port a case study", "add a client logo".</li>
+    </ul></div>
+    <div class="col"><ul>
+      <li><b>Don't let it invent.</b> Copy, clients, metrics — real or nothing. Write it as a rule.</li>
+      <li><b>Fonts are files.</b> Put woff2 in the repo, licence them properly.</li>
+      <li><b>Mobile is a second brief,</b> not a media query afterthought.</li>
+      <li><b>Cost.</b> A site migration burned ~$60 of tokens for us. Cheaper than one Webflow month.</li>
+      <li><b>It will be wrong.</b> Same as a junior. Same fix: clearer brief, smaller step.</li>
+    </ul></div>
+  </div>
+</section>
+
+<!-- 24 · when not -->
+<section class="slide" data-name="whennot">
+  <div class="act">act 4 <b>environment</b></div>
+  <div class="head"><h1 class="t-h1" data-in>When to stay<br>on the builder.</h1><ul data-in><li>honest version</li></ul></div>
+  <div class="lines" data-in>
+    <p class="yes">Client edits daily and refuses git.<span>stay</span></p>
+    <p class="yes">Five pages, lives for one campaign.<span>stay</span></p>
+    <p class="yes">Nobody on the team will open a terminal.<span>stay</span></p>
+    <p>You want what the panel doesn't have.<span>move</span></p>
+    <p>You have a design system. Make it real.<span>move</span></p>
+    <p>Third year paying per seat, per site.<span>move</span></p>
+  </div>
+</section>
+
+<!-- 25 · summary -->
+<section class="slide" data-name="summary">
+  <div class="head"><h1 class="t-h1" data-in>If you remember five things.</h1></div>
+  <div class="steps" data-in>
+    <div class="step"><span class="n">01</span><span class="t">Take content and screenshots. Leave the code.</span><span class="d">The builder's HTML is not a starting point.</span></div>
+    <div class="step"><span class="n">02</span><span class="t">Tokens before anything.</span><span class="d">One <code>globals.css</code>, one <code>/ds</code> page, one rule: never a raw value.</span></div>
+    <div class="step"><span class="n">03</span><span class="t">Eight components, then pages.</span><span class="d">Order: tokens → ui → fx → layout → primitives → pages.</span></div>
+    <div class="step"><span class="n">04</span><span class="t">CLAUDE.md is where your taste lives.</span><span class="d">Every correction becomes a standing rule.</span></div>
+    <div class="step"><span class="n">05</span><span class="t">Brief like a designer, review like a designer.</span><span class="d">Screenshots in, browser check out, pixels not adjectives.</span></div>
+  </div>
+</section>
+
+<!-- 26 · close -->
+<section class="slide closing" data-name="close">
+  <h1 class="t-display" data-in>Questions.</h1>
+  <div class="sub" data-in style="margin-top:4vh;display:flex;justify-content:space-between;align-items:flex-end;width:100%"><p class="t-body">mike@unknw.com · unknw.com/ds · the deck: unknw.com/events/nova</p><svg style="height:3vh;width:auto;color:var(--ink);opacity:.7"><use href="#unknw"/></svg></div>
+</section>
+
+<div class="progress" id="progress"></div><div class="counter" id="counter"></div>
+<script>
+const slides=[...document.querySelectorAll('.slide')],corner=document.getElementById('corner'),progress=document.getElementById('progress'),counter=document.getElementById('counter');
+let i=Math.min(slides.length-1,Math.max(0,(parseInt(location.hash.slice(1))||1)-1));
+
+/* ── terminal scripts: [kind, text, holdMs]; kinds: p=prompt typed, t=think, l=tool line, o=output, ok=done */
+const SCRIPTS={
+what:[
+ ['p','the hero headline wraps to three lines on 1440. make it two — shrink the display size one step in the ladder, don\'t touch anything else',900],
+ ['t','reading app/globals.css, app/page.tsx…',700],
+ ['l','read  app/globals.css  (--text-display: clamp(52px, 9.2vw, 164px))',400],
+ ['l','read  components/home/Hero.tsx',400],
+ ['l','edit  Hero.tsx  .t-display → .t-h1',500],
+ ['l','run   npm run dev  → http://localhost:3000',600],
+ ['l','browser  1440×900  screenshot  → two lines ✓',800],
+ ['ok','Hero headline now uses .t-h1 (clamp 40px–112px). Two lines at 1440, two at 1280, three at 390 as before. One file changed. Want me to commit?',0],
+],
+audit:[
+ ['p','audit https://acme.webflow.io — list every page, its URL, the sections on it, all images with dimensions, fonts in use, and every CMS collection. write it to docs/inventory.md',900],
+ ['t','crawling from the sitemap…',700],
+ ['l','fetch  /sitemap.xml  → 23 urls',350],
+ ['l','browser  23 pages  desktop + mobile  → shots/  (46 png)',900],
+ ['l','computed styles  → 3 font families, 14 font sizes, 9 greys',500],
+ ['l','images  → 212 files, 61 unique originals, largest 4200px',500],
+ ['l','cms  → 4 collections: work (18), team (9), posts (31), clients (24)',500],
+ ['l','write  docs/inventory.md',400],
+ ['ok','Inventory written. Notable: 14 font sizes collapse to a 6-step ladder; 9 greys → 3 ink tokens; 7 pages share one "feature row" section → one component. Two pages (/legal, /old-team) have zero inbound links — candidates to drop with a 301.',0],
+],
+page:[
+ ['p','build /about from shots/about-desktop.png and shots/about-mobile.png. content in data/about.json. use Section, Reveal, Btn. compare to the shots at 1440 and 390 before reporting',900],
+ ['t','reading CLAUDE.md, /ds, components/…',700],
+ ['l','read  data/about.json  (hero, story, team ×9, cta)',350],
+ ['l','write  app/about/page.tsx',600],
+ ['l','write  components/about/TeamGrid.tsx',500],
+ ['l','run   dev  → /about',500],
+ ['l','browser  1440  compare  → team gap 40px vs 48px in shot',700],
+ ['l','edit  TeamGrid.tsx  gap → var(--gap-cols)',400],
+ ['l','browser  390  compare  ✓',600],
+ ['ok','/about built: 4 sections, 1 new component (TeamGrid, 3→1 columns at 768). Matches shots within 8px. Reveal on every section, Btn for the CTA. No new tokens needed. Lighthouse 100/100/100/100.',0],
+],
+setup:[
+ ['p','brew install node git gh',400],
+ ['p','npm install -g @anthropic-ai/claude-code',400],
+ ['p','npx create-next-app@latest acme-site --ts --app --src-dir=false',500],
+ ['p','cd acme-site && git init && gh repo create acme-site --private --source=. --push',500],
+ ['p','claude',400],
+ ['o','╭─ Claude Code ────────────────────╮\n│ ~/code/acme-site  ·  no CLAUDE.md │\n╰──────────────────────────────────╯',500],
+ ['p','/init',400],
+ ['o','Wrote CLAUDE.md — describe the project, the rules, the commands.',500],
+ ['p','set up a design-system skeleton: app/globals.css with :root tokens (bg, ink, red, hairline, type ladder, spacing, motion), a /ds page that renders them, and add the rule to CLAUDE.md: never a raw value in a component',800],
+ ['l','write  app/globals.css · app/ds/page.tsx · CLAUDE.md',700],
+ ['ok','Done. `vercel link && vercel` when you want it live. Push to main = production, every branch = preview URL.',0],
+],
+};
+const runners={};
+const runTerm=(el)=>{
+  const body=el.querySelector('.body'),script=SCRIPTS[el.dataset.script]; if(!body||!script)return null;
+  let stop=false,timer=null;
+  const wait=ms=>new Promise(r=>timer=setTimeout(r,ms));
+  const line=(cls)=>{const s=document.createElement('span');s.className='l '+cls;body.appendChild(s);return s};
+  const type=async(s,text,cps)=>{for(let k=1;k<=text.length&&!stop;k++){s.textContent=text.slice(0,k);await wait(1000/cps)}};
+  const go=async()=>{
+    body.innerHTML='';
+    for(const [kind,text,hold] of script){ if(stop)return;
+      if(kind==='p'){const s=line('cur');const pre=document.createElement('span');pre.className='p';pre.textContent='› ';s.appendChild(pre);const t=document.createElement('span');s.appendChild(t);await type(t,text,55);s.classList.remove('cur');}
+      else if(kind==='t'){const s=line('c cur');s.textContent='  '+text;await wait(hold);s.classList.remove('cur');s.textContent='  '+text.replace('…','');}
+      else if(kind==='l'){const s=line('c');s.textContent='  '+text;}
+      else if(kind==='o'){const s=line('c');s.textContent=text;}
+      else if(kind==='ok'){const s=line('ok cur');await type(s,text,120);s.classList.remove('cur');}
+      if(kind!=='p'&&kind!=='ok')await wait(hold);
+      if(kind==='p')await wait(hold);
+    }
+  };
+  return {start(){stop=false;go()},stop(){stop=true;clearTimeout(timer)}};
+};
+document.querySelectorAll('.term[data-script]').forEach(el=>{runners[el.dataset.script]=runTerm(el)});
+
+/* ── media: lazy, placeholder if missing */
+document.querySelectorAll('.frame').forEach(f=>{
+  const img=f.querySelector('img[data-src]'),vid=f.querySelector('video[data-src]');
+  let pending=(img?1:0)+(vid?1:0),ok=false;
+  const fail=()=>{if(--pending<=0&&!ok)f.classList.add('missing')};
+  if(vid){vid.addEventListener('loadeddata',()=>{ok=true;f.classList.remove('missing');if(img)img.style.display='none'});vid.addEventListener('error',fail,true);vid.src=vid.dataset.src;vid.load()}
+  if(img){img.addEventListener('load',()=>{ok=true;f.classList.remove('missing')});img.addEventListener('error',fail);img.src=img.dataset.src}
+  if(!pending)f.classList.add('missing');
+});
+
+function fitTerm(){const w=document.querySelector('.slide.on .termwrap');if(!w)return;w.style.setProperty('--top',Math.round(w.getBoundingClientRect().top)+'px')}
+addEventListener('resize',fitTerm);
+function show(n){
+  i=Math.max(0,Math.min(slides.length-1,n));
+  slides.forEach((s,k)=>{
+    const on=k===i;s.classList.toggle('on',on);
+    s.querySelectorAll('video').forEach(v=>{if(!on||!v.src){v.pause();return}v.currentTime=0;v.play().catch(()=>{})});
+    const t=s.querySelector('.term[data-script]');if(t){const r=runners[t.dataset.script];if(r){on?setTimeout(()=>r.start(),500):r.stop()}}
+  });
+  corner.classList.toggle('show',!(i===0||i===slides.length-1));
+  setTimeout(fitTerm,50);setTimeout(fitTerm,700);
+  progress.style.width=((i+1)/slides.length*100)+'%';
+  counter.textContent=String(i+1).padStart(2,'0')+' / '+String(slides.length).padStart(2,'0');
+  history.replaceState(null,'','#'+(i+1));
+}
+addEventListener('keydown',e=>{
+  if(['ArrowRight',' ','PageDown'].includes(e.key)){e.preventDefault();show(i+1)}
+  else if(['ArrowLeft','PageUp'].includes(e.key)){e.preventDefault();show(i-1)}
+  else if(e.key==='Home')show(0);else if(e.key==='End')show(slides.length-1);
+  else if(e.key.toLowerCase()==='f')document.fullscreenElement?document.exitFullscreen():document.documentElement.requestFullscreen();
+});
+document.fonts.ready.then(()=>show(i));
+</script>
+</body>
+</html>
