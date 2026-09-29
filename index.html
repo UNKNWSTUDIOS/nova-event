@@ -212,8 +212,12 @@ b{font-weight:400;color:var(--ink)}
 .meta b{color:var(--ink)}
 .hot .meta b{color:var(--red)}
 /* big stack diagram */
-.stack{width:min(100%, calc((100vh - 26vh) * 16 / 9));align-self:center}
-.stack text{font-family:var(--font-body);fill:var(--ink);font-size:12px}
+.stack{width:min(100%, calc((100vh - 30vh) * 640 / 300));align-self:center;margin-top:2vh}
+.stack text{font-family:var(--font-body);fill:var(--ink);font-size:12.5px}
+.stack .big{font-family:var(--font-display);font-size:22px;letter-spacing:-.02em}
+.stack .box{stroke-width:1}
+.stack .box.red{stroke-width:1.2}
+.stack .ln.red{stroke-width:1.2}
 .stack .box{fill:var(--bg-raised);stroke:var(--hairline-strong)}
 .stack .box.red{stroke:var(--red)}
 .stack .ln{stroke:var(--hairline-strong);fill:none}
@@ -482,19 +486,31 @@ b{font-weight:400;color:var(--ink)}
   <div class="act">act 4 <b>running it</b></div>
   <div class="head"><h1 class="t-h1" data-in>The stack, connected.</h1><ul data-in><li>boring on purpose</li><li>every piece replaceable, nothing locked</li></ul></div>
   <svg class="stack" viewBox="0 0 640 300" data-in>
-    <defs><marker id="ar" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="6" markerHeight="6" orient="auto"><path d="M0 0L10 5L0 10z" class="arr red"/></marker></defs>
-    <rect class="box red" x="10" y="100" width="120" height="100" rx="10"/><text x="24" y="130" style="font-size:15px">your LLM</text><text class="lbl2" x="24" y="152">claude code</text><text class="lbl2" x="24" y="166">reads · edits · checks</text>
-    <path class="ln red" d="M130 150 H170" marker-end="url(#ar)"/>
-    <rect class="box red" x="170" y="40" width="240" height="220" rx="10"/><text x="184" y="70" style="font-size:15px">github</text><text class="lbl2" x="184" y="88">the repo — everything lives here</text>
-    <rect class="box" x="184" y="104" width="212" height="30" rx="5"/><text x="194" y="123">tokens + DESIGN.md</text>
-    <rect class="box" x="184" y="142" width="212" height="30" rx="5"/><text x="194" y="161">components · sections</text>
-    <rect class="box" x="184" y="180" width="212" height="30" rx="5"/><text x="194" y="199">pages</text>
-    <rect class="box" x="184" y="218" width="212" height="30" rx="5"/><text x="194" y="237">content · assets · fonts</text>
-    <path class="ln red" d="M410 150 H450" marker-end="url(#ar)"/>
-    <rect class="box red" x="450" y="100" width="120" height="100" rx="10"/><text x="464" y="130" style="font-size:15px">vercel</text><text class="lbl2" x="464" y="152">push = live</text><text class="lbl2" x="464" y="166">branch = preview</text>
-    <path class="ln red" d="M570 150 H610" marker-end="url(#ar)"/>
-    <rect class="box" x="610" y="100" width="28" height="100" rx="10"/>
-    <text x="630" y="230" text-anchor="end" style="font-size:15px">your domain</text><text class="lbl2" x="630" y="246" text-anchor="end">dns last</text>
+    <defs><marker id="ar" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="5" markerHeight="5" orient="auto"><path d="M0 1L9 5L0 9z" class="arr red"/></marker></defs>
+    <!-- llm -->
+    <g>
+      <rect class="box red" x="20" y="95" width="150" height="110" rx="14"/>
+      <text class="big" x="95" y="145" text-anchor="middle">your LLM</text>
+      <text class="lbl2" x="95" y="172" text-anchor="middle">reads · edits · checks</text>
+    </g>
+    <path class="ln red" d="M170 150 H210" marker-end="url(#ar)"/>
+    <!-- github -->
+    <g>
+      <rect class="box red" x="215" y="30" width="210" height="240" rx="14"/>
+      <text class="big" x="320" y="68" text-anchor="middle">github</text>
+      <text class="lbl2" x="320" y="88" text-anchor="middle">everything lives here</text>
+      <rect class="box" x="237" y="106" width="166" height="32" rx="7"/><text x="320" y="127" text-anchor="middle">tokens · DESIGN.md</text>
+      <rect class="box" x="237" y="146" width="166" height="32" rx="7"/><text x="320" y="167" text-anchor="middle">components · sections</text>
+      <rect class="box" x="237" y="186" width="166" height="32" rx="7"/><text x="320" y="207" text-anchor="middle">pages</text>
+      <rect class="box" x="237" y="226" width="166" height="32" rx="7"/><text x="320" y="247" text-anchor="middle">content · assets · fonts</text>
+    </g>
+    <path class="ln red" d="M425 150 H465" marker-end="url(#ar)"/>
+    <!-- vercel -->
+    <g>
+      <rect class="box red" x="470" y="95" width="150" height="110" rx="14"/>
+      <text class="big" x="545" y="145" text-anchor="middle">vercel</text>
+      <text class="lbl2" x="545" y="172" text-anchor="middle">push = live · branch = preview</text>
+    </g>
   </svg>
 </section>
 
