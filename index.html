@@ -170,6 +170,7 @@ b{font-weight:400;color:var(--ink)}
 .plate .lg{display:flex;align-items:center;gap:1vw}
 .plate .lg svg{height:2.27vh;width:9.8vh;color:#fff;display:block}
 .plate.plate-c .lg svg{height:6vh;width:26vh}
+.plate .link{font-family:var(--font-body);font-size:clamp(16px,1.5vw,28px);text-transform:none;letter-spacing:0;color:#fff}
 .plate .lg i{font-style:normal;color:var(--ink-faint);font-family:var(--font-mono);font-size:clamp(10px,.9vw,14px)}
 .plate .lg img{height:2.27vh;display:block}
 .plate h1{font-family:var(--font-display);letter-spacing:-.02em;line-height:1.02;font-size:clamp(20px,2.45vw,43px);color:#fff}
@@ -536,11 +537,11 @@ b{font-weight:400;color:var(--ink)}
 
 <!-- 20 · close -->
 <section class="slide full" data-name="close">
-  <div class="reel"><video class="on" muted loop autoplay playsinline src="video/my/c4d.mp4" style="object-fit:cover;opacity:.5"></video></div>
+  <div class="reel" id="reel2"></div>
   <div class="plate plate-c">
     <div class="lg"><svg><use href="#unknw"/></svg></div>
     <h1>Questions.</h1>
-    <p style="text-transform:none;letter-spacing:.02em">linkedin.com/in/michael-rosenblatt-design</p>
+    <p class="link">linkedin.com/in/michael-rosenblatt-design</p>
   </div>
 </section>
 
@@ -635,7 +636,7 @@ const runTerm=(el)=>{
 document.querySelectorAll('.term[data-script]').forEach(el=>{runners[el.dataset.script]=runTerm(el)});
 
 /* ── hero reel ── images 0.5–1s, videos 1–4s; shuffled cycles: every asset once per cycle, fresh order each cycle; videos resume where they stopped; next asset prepared before swap */
-const makeReel=(el)=>{
+const makeReel=(el,plain)=>{
   if(!el) return null;
   const START=5;
   let items=[], deck=[], live=null, last=null, clock=0, running=false, gen=0;
@@ -657,7 +658,7 @@ const makeReel=(el)=>{
     if(v.readyState<3) await once(v,'canplay',1500);
     return v;
   };
-  const dur=(it)=>it.type==='image'?rnd(500,1000):rnd(1000,4000);
+  const dur=(it)=>plain?5000:(it.type==='image'?rnd(500,1000):rnd(1000,4000));
   const swap=async(it,node,ms)=>{
     if(node.tagName==='VIDEO'){
       if(!node.isConnected) el.appendChild(node);
@@ -665,7 +666,7 @@ const makeReel=(el)=>{
       await withTimeout(Promise.all([once(node,'playing',400),p]),500);
     } else el.appendChild(node);
     node.classList.remove('fx-blur','fx-zoom','fx-flash','fx-glitch');
-    if(Math.random()<1/15){
+    if(!plain&&Math.random()<1/15){
       const fx=['fx-blur','fx-zoom','fx-flash','fx-glitch'][Math.floor(Math.random()*4)];
       node.classList.add(fx);
       if(fx==='fx-flash'){let f=el.querySelector('.flash');if(!f){f=document.createElement('div');f.className='flash';el.appendChild(f)}f.classList.remove('go');f.getBoundingClientRect();f.classList.add('go')}
@@ -694,7 +695,7 @@ const makeReel=(el)=>{
     stop:()=>{running=false;gen++;if(live&&live.tagName==='VIDEO')live.pause()}
   };
 };
-const reel=makeReel(document.getElementById('reel')), reel2=null;
+const reel=makeReel(document.getElementById('reel')), reel2=makeReel(document.getElementById('reel2'),true);
 
 /* ── media: lazy, placeholder if missing */
 document.querySelectorAll('.frame').forEach(f=>{
@@ -716,6 +717,7 @@ function show(n){
     const t=s.querySelector('.term[data-script]');if(t){const r=runners[t.dataset.script];if(r){on?setTimeout(()=>r.start(),500):r.stop()}}
   });
     if(reel){i===0?reel.start():reel.stop()}
+  if(reel2){i===slides.length-1?reel2.start():reel2.stop()}
   setTimeout(fitTerm,50);setTimeout(fitTerm,700);
   progress.style.width=((i+1)/slides.length*100)+'%';
   counter.textContent=String(i+1).padStart(2,'0')+' / '+String(slides.length).padStart(2,'0');
@@ -728,7 +730,7 @@ addEventListener('keydown',e=>{
   else if(e.key==='Home')show(0);else if(e.key==='End')show(slides.length-1);
   else if(e.key.toLowerCase()==='f')document.fullscreenElement?document.exitFullscreen():document.documentElement.requestFullscreen();
 });
-document.fonts.ready.then(()=>{if(reel)reel.load();show(i)});
+document.fonts.ready.then(()=>{if(reel)reel.load();if(reel2)reel2.load();show(i)});
 </script>
 </body>
 </html>
