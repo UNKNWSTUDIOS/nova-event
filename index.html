@@ -75,6 +75,9 @@ b{font-weight:400;color:var(--ink)}
 .step.dim .t{color:var(--ink-faint)}
 .step.dim .n{color:var(--ink-faint)}
 .step.dim .d{color:var(--ink-faint)}
+.steps.pr .d{font-family:var(--font-mono);font-size:clamp(12px,1.05vw,18px);line-height:1.45;color:var(--ink-muted)}
+.steps.pr .step{grid-template-columns:4vw 34fr 66fr;padding:1.3vh 0}
+.steps.pr .t{font-size:clamp(18px,1.9vw,34px)}
 
 /* media */
 .frame{position:relative;background:var(--bg-raised);border:1px solid var(--hairline);border-radius:12px;overflow:hidden;aspect-ratio:16/9;width:100%;box-shadow:0 30px 80px rgba(0,0,0,.4)}
@@ -350,15 +353,15 @@ b{font-weight:400;color:var(--ink)}
 <!-- 08 · migration steps -->
 <section class="slide" data-name="migrate">
   <div class="act">act 2 <b>migration</b></div>
-  <div class="head"><h1 class="t-h1" data-in>How to migrate.</h1><ul data-in><li>seven steps, in this order</li><li>the builder is a source of truth for content — never for code</li></ul></div>
-  <div class="steps" data-in>
-    <div class="step"><span class="n">01</span><span class="t">Export the content.</span><span class="d">Every CMS collection as CSV/JSON. <b>Webflow</b> rich text arrives as HTML in cells; <b>Framer/Wix</b> CSV only. Clean it once.</span></div>
-    <div class="step"><span class="n">02</span><span class="t">Collect originals.</span><span class="d">Images at source size (the CDN serves resizes), video, fonts and their licences. Not in any export.</span></div>
-    <div class="step"><span class="n">03</span><span class="t">Map every URL.</span><span class="d">Crawl the sitemap; decide keep / rename / drop; write the 301 table. <b>Wix</b> URLs are ugly — this is your chance.</span></div>
-    <div class="step"><span class="n">04</span><span class="t">Screenshot every page.</span><span class="d">Desktop and mobile, full length. This is the spec. Better than any export.</span></div>
-    <div class="step"><span class="n">05</span><span class="t">Read the design off the live site.</span><span class="d">Type scale, spacing, colours → rounded into tokens. 14 font sizes become 6.</span></div>
-    <div class="step"><span class="n">06</span><span class="t">Rebuild. Never port.</span><span class="d">The exported HTML is not a starting point. Interactions, forms, apps — rebuilt against the tokens.</span></div>
-    <div class="step"><span class="n">07</span><span class="t">Redirects, SEO, DNS last.</span><span class="d">301 table live, sitemap, meta. Move the domain only when the new site is proven on a preview URL.</span></div>
+  <div class="head"><h1 class="t-h1" data-in>How to migrate.</h1><ul data-in><li>seven prompts, in this order</li><li>content from the builder — code never</li></ul></div>
+  <div class="steps pr" data-in>
+    <div class="step"><span class="n">01</span><span class="t">Export the content.</span><span class="d">› Export every CMS collection from the Webflow site to data/*.json. Convert rich-text HTML cells to markdown. Report row counts per collection.</span></div>
+    <div class="step"><span class="n">02</span><span class="t">Collect originals.</span><span class="d">› Pull every image, video and font off the live site at source size — no CDN resizes. List anything below 1600px so we can ask the client for originals.</span></div>
+    <div class="step"><span class="n">03</span><span class="t">Map every URL.</span><span class="d">› Crawl the sitemap. Write docs/redirects.md: keep / rename / drop for each URL, with the 301 target. Flag pages with zero inbound links.</span></div>
+    <div class="step"><span class="n">04</span><span class="t">Screenshot every page.</span><span class="d">› Full-page screenshots of every URL at 1440 and 390 into shots/. These are the spec for the rebuild.</span></div>
+    <div class="step"><span class="n">05</span><span class="t">Read the design off the site.</span><span class="d">› Read computed styles on every page. Propose a token set: colour by role, a six-step type ladder, spacing, radius, motion. Round, don't copy.</span></div>
+    <div class="step"><span class="n">06</span><span class="t">Rebuild. Never port.</span><span class="d">› Build /about from shots/about-*.png and data/about.json, on the tokens and the existing components. Don't read the exported HTML. Check it in the browser before reporting.</span></div>
+    <div class="step"><span class="n">07</span><span class="t">Redirects, SEO, DNS last.</span><span class="d">› Add the 301 table from docs/redirects.md, sitemap and meta for every page. Deploy to a preview URL. Don't touch DNS.</span></div>
   </div>
 </section>
 
