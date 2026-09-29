@@ -255,6 +255,15 @@ b{font-weight:400;color:var(--ink)}
 .sh i{flex:1;height:6vh;border:1px solid var(--hairline-strong);display:flex;align-items:center;justify-content:center;background:var(--bg)}
 .sh i.mv{border-radius:12px;animation:mv 2.4s var(--ease-out) infinite alternate}
 @keyframes mv{from{transform:translateX(0)}to{transform:translateX(1.2vw)}}
+
+/* migration carousel */
+.mig{display:grid;grid-template-columns:30fr 70fr;gap:2vw;height:calc(100vh - var(--top,260px) - var(--pad-y) - 2vh)}
+.migsteps{list-style:none;display:flex;flex-direction:column;justify-content:space-between;border-top:1px solid var(--hairline-strong);padding-top:1.4vh}
+.migsteps li{font-family:var(--font-display);letter-spacing:-.02em;font-size:clamp(18px,2vw,36px);line-height:1;color:var(--ink-faint);display:flex;gap:1vw;align-items:baseline;transition:color var(--dur) var(--ease-out)}
+.migsteps li b{font-family:var(--font-mono);font-size:clamp(11px,.95vw,16px);letter-spacing:.08em;color:var(--ink-faint);font-weight:400;transition:color var(--dur)}
+.migsteps li.now{color:var(--ink)}.migsteps li.now b{color:var(--red)}
+.migsteps li.done{color:var(--ink-muted)}
+.mig .term{font-size:clamp(16px,1.5vw,27px)}
 </style>
 </head>
 <body>
@@ -369,14 +378,11 @@ b{font-weight:400;color:var(--ink)}
 <section class="slide" data-name="migrate">
   <div class="act">act 2 <b>migration</b></div>
   <div class="head"><h1 class="t-h1" data-in>How to migrate.</h1><ul data-in><li>seven prompts, in this order</li><li>content from the builder — code never</li></ul></div>
-  <div class="steps pr" data-in>
-    <div class="step"><span class="n">01</span><span class="t">Export the content.</span><span class="d">› Export every CMS collection from the Webflow site to data/*.json. Convert rich-text HTML cells to markdown. Report row counts per collection.</span></div>
-    <div class="step"><span class="n">02</span><span class="t">Collect originals.</span><span class="d">› Pull every image, video and font off the live site at source size — no CDN resizes. List anything below 1600px so we can ask the client for originals.</span></div>
-    <div class="step"><span class="n">03</span><span class="t">Map every URL.</span><span class="d">› Crawl the sitemap. Write docs/redirects.md: keep / rename / drop for each URL, with the 301 target. Flag pages with zero inbound links.</span></div>
-    <div class="step"><span class="n">04</span><span class="t">Screenshot every page.</span><span class="d">› Full-page screenshots of every URL at 1440 and 390 into shots/. These are the spec for the rebuild.</span></div>
-    <div class="step"><span class="n">05</span><span class="t">Read the design off the site.</span><span class="d">› Read computed styles on every page. Propose a token set: colour by role, a six-step type ladder, spacing, radius, motion. Round, don't copy.</span></div>
-    <div class="step"><span class="n">06</span><span class="t">Rebuild. Never port.</span><span class="d">› Build /about from shots/about-*.png and data/about.json, on the tokens and the existing components. Don't read the exported HTML. Check it in the browser before reporting.</span></div>
-    <div class="step"><span class="n">07</span><span class="t">Redirects, SEO, DNS last.</span><span class="d">› Add the 301 table from docs/redirects.md, sitemap and meta for every page. Deploy to a preview URL. Don't touch DNS.</span></div>
+  <div class="mig" data-in>
+    <ol class="migsteps" id="migsteps">
+      <li><b>01</b>Export the content</li><li><b>02</b>Collect originals</li><li><b>03</b>Map every URL</li><li><b>04</b>Screenshot every page</li><li><b>05</b>Read the design → tokens</li><li><b>06</b>Rebuild. Never port</li><li><b>07</b>Redirects, SEO, DNS last</li>
+    </ol>
+    <div class="term hot" data-script="migrate" data-carousel="migsteps"><div class="bar"><i></i><i></i><i></i><span>claude · ~/code/acme-site</span></div><div class="body"></div></div>
   </div>
 </section>
 
@@ -594,6 +600,15 @@ let i=Math.min(slides.length-1,Math.max(0,(parseInt(location.hash.slice(1))||1)-
 
 /* ── terminal scripts: [kind, text, holdMs]; kinds: p=prompt typed, t=think, l=tool line, o=output, ok=done */
 const SCRIPTS={
+migrate:[
+ ['step',0],['p','Export every CMS collection from the Webflow site to data/*.json. Convert rich-text HTML cells to markdown. Report row counts per collection.',600],['l','4 collections → work 18 · team 9 · posts 31 · clients 24',1400],
+ ['step',1],['p','Pull every image, video and font off the live site at source size — no CDN resizes. List anything below 1600px so we can ask the client for originals.',600],['l','212 files · 61 originals · 9 below 1600px → docs/ask-client.md',1400],
+ ['step',2],['p','Crawl the sitemap. Write docs/redirects.md: keep / rename / drop for each URL, with the 301 target. Flag pages with zero inbound links.',600],['l','23 urls · keep 17 · rename 4 · drop 2 (no inbound links)',1400],
+ ['step',3],['p','Full-page screenshots of every URL at 1440 and 390 into shots/. These are the spec for the rebuild.',600],['l','46 png → shots/',1400],
+ ['step',4],['p','Read computed styles on every page. Propose a token set: colour by role, a six-step type ladder, spacing, radius, motion. Round, don\'t copy.',600],['l','14 font sizes → 6 · 9 greys → 3 inks · 11 paddings → 5 steps',1400],
+ ['step',5],['p','Build /about from shots/about-*.png and data/about.json, on the tokens and the existing components. Don\'t read the exported HTML. Check it in the browser before reporting.',600],['l','/about · 4 sections · 1 new component · matches shots within 8px',1400],
+ ['step',6],['p','Add the 301 table from docs/redirects.md, sitemap and meta for every page. Deploy to a preview URL. Don\'t touch DNS.',600],['l','vercel → acme-site-git-main.vercel.app · 23 redirects · dns untouched',2200],
+],
 what:[
  ['p','I need 80 ABM landing pages for the accounts in data/abm.csv — one per company. Headline, the intro line and the case-study block differ per account; everything else is the same. Take the three PDFs in refs/ as reference for tone and layout. Use the design system — tokens, Hero, Stats, CTA sections, nothing new. Open five at random in the browser and compare before you report.',900],
  ['t','reading DESIGN.md, globals.css, components/sections…',700],
@@ -639,6 +654,7 @@ const runTerm=(el)=>{
   const go=async()=>{
     body.innerHTML='';
     for(const [kind,text,hold] of script){ if(stop)return;
+      if(kind==='step'){body.innerHTML='';const ol=document.getElementById(el.dataset.carousel);if(ol){[...ol.children].forEach((li,k)=>{li.classList.toggle('now',k===text);li.classList.toggle('done',k<text)})}continue}
       if(kind==='p'){const s=line('cur');const pre=document.createElement('span');pre.className='p';pre.textContent='› ';s.appendChild(pre);const t=document.createElement('span');s.appendChild(t);await type(t,text,55);s.classList.remove('cur');}
       else if(kind==='t'){const s=line('c cur');s.textContent='  '+text;await wait(hold);s.classList.remove('cur');s.textContent='  '+text.replace('…','');}
       else if(kind==='l'){const s=line('c');s.textContent='  '+text;}
@@ -647,6 +663,7 @@ const runTerm=(el)=>{
       if(kind!=='p'&&kind!=='ok')await wait(hold);
       if(kind==='p')await wait(hold);
     }
+    if(el.dataset.carousel&&!stop){await wait(1500);go()}
   };
   return {start(){stop=false;go()},stop(){stop=true;clearTimeout(timer)}};
 };
@@ -724,7 +741,7 @@ document.querySelectorAll('.frame').forEach(f=>{
   if(!pending)f.classList.add('missing');
 });
 
-function fitTerm(){const w=document.querySelector('.slide.on .termwrap');if(!w)return;w.style.setProperty('--top',Math.round(w.getBoundingClientRect().top)+'px');const t=w.querySelector('.tall');if(t)t.style.setProperty('--top',Math.round(w.getBoundingClientRect().top)+'px')}
+function fitTerm(){const m=document.querySelector('.slide.on .mig');if(m)m.style.setProperty('--top',Math.round(m.getBoundingClientRect().top)+'px');const w=document.querySelector('.slide.on .termwrap');if(!w)return;w.style.setProperty('--top',Math.round(w.getBoundingClientRect().top)+'px');const t=w.querySelector('.tall');if(t)t.style.setProperty('--top',Math.round(w.getBoundingClientRect().top)+'px')}
 addEventListener('resize',fitTerm);
 function show(n){
   i=Math.max(0,Math.min(slides.length-1,n));
