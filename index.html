@@ -269,9 +269,9 @@ b{font-weight:400;color:var(--ink)}
 .migsteps li.now{color:var(--ink)}.migsteps li.now b{color:var(--red)}
 .migsteps li.done{color:var(--ink-muted)}
 .mig .term{font-size:clamp(16px,1.5vw,27px)}
-.mig.onep{grid-template-columns:46fr 54fr}
-.mig.onep .term{font-size:clamp(13px,1.15vw,21px)}
-.mig.onep .frame{height:100%;aspect-ratio:auto;background:#0d0d0e}
+.mig.onep{grid-template-columns:1fr auto;height:auto;align-items:stretch}
+.mig.onep .term{font-size:clamp(11px,.95vw,17px);height:auto}
+.mig.onep .frame{height:calc(100vh - var(--top,260px) - var(--pad-y) - 2vh);width:calc((100vh - var(--top,260px) - var(--pad-y) - 2vh) * 16 / 9);aspect-ratio:auto;background:#0d0d0e}
 .mig.onep .frame video,.mig.onep .frame img{position:absolute;inset:0;width:100%;height:100%;object-fit:contain;object-position:top;transform:none}
 
 .pagestruct{width:min(100%, 56vw);align-self:center;display:flex;flex-direction:column;gap:1vh;margin-top:1vh}
